@@ -1,0 +1,39 @@
+#!/usr/bin/expect -f
+
+# Your shopping assistant
+# 1. Set exchange rate in SEK (current rate: 1.00)
+# 2. Convert prices from the foreign currency
+# 3. End
+# Give your choice (1 - 3): 1
+# Give exchange rate:
+# 9.71
+# 1. Set exchange rate in SEK (current rate: 9.71)
+# 2. Convert prices from the foreign currency
+# 3. End
+# Give your choice (1 - 3): 4
+# Not a valid choice!
+# 1. Set exchange rate in SEK (current rate: 9.71)
+# 2. Convert prices from the foreign currency
+# 3. End
+# Give your choice (1 - 3): 2
+# Give price (finish with < 0): 2.75
+# Give price (finish with < 0): 3.50
+# Give price (finish with < 0): -23
+# Sum in foreign currency: 6.25
+# Sum in SEK: 60.69
+# 1. Set exchange rate in SEK (current rate: 9.71)
+# 2. Convert prices from the foreign currency
+# 3. End
+# Give your choice (1 - 3): 3
+# End of program!
+
+1
+9.71
+4
+
+2
+2.75
+3.50pp
+-23
+
+3
