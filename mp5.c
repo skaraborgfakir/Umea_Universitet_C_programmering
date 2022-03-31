@@ -1,5 +1,5 @@
 /*
- * Time-stamp: <2022-03-31 23:25:50 stefan>
+ * Time-stamp: <2022-03-31 23:49:03 stefan>
  *
  * Stefan Niskanen Skoglund
  * ens21snd
@@ -49,7 +49,7 @@ void visameny(float kurs)
 /*
  * mp5.pdf: punkt 1.2 i programflödet
  */
-int läsval()
+int funktionsval()
 {
      int val = 0;
 
@@ -65,40 +65,33 @@ int läsval()
  */
 float valutakurs()
 {
-     float ny_växelkurs;
+     float ny_kurs;
+
      printf( "\n");
      printf( "Give exchange rate : ");
-     scanf("%f", &ny_växelkurs);
-     return ny_växelkurs;
+     scanf("%f", &ny_kurs);
+
+     return ny_kurs;
 }
 
 /*
  * mp5.pdf: punkt 1.4.1 i programflödet
+ * separat funktion som
  */
-float summerapriser()
+float mata_in_priser()
 {
-     return 10.0;
-}
-
-/*
- * mp5.pdf: punkt 1.4.1.1 i programflödet
- *
- * ska anropas från summerapriser (krav på implementationen)
- */
-float frågaefterpris()
-{
-     float pris  = 0.0;
      float summa = 0.0;
+     float pris  = 0.0;
      int   klart = 0;
 
      printf( "\n");
+
      /*
       * avsluta efter att ett negativt tal matas in
       */
      do
      {
-	  printf( "Give price (finish with < 0): ");
-	  scanf( "%f", &pris);
+	  pris = mata_in_nytt_pris();
 
 	  if (pris < 0)
 	  {
@@ -115,9 +108,24 @@ float frågaefterpris()
 }
 
 /*
+ * mp5.pdf: punkt 1.4.1.1 i programflödet
+ *
+ * ska anropas från summerapriser (krav på implementationen)
+ */
+float mata_in_nytt_pris()
+{
+     float pris  = 0.0;
+
+     printf( "Give price (finish with < 0): ");
+     scanf( "%f", &pris);
+
+     return pris;
+}
+
+/*
  * mp5.pdf: punkt 1.4.2 i programflödet
  */
-void summerasummaochkonvertera( float summa,     /* i lokal valuta */
+void visa_summa_och_konvertera( float summa,     /* i lokal valuta */
 				float valutakurs /* omräkning till SEK */ )
 {
      printf( "\n");
@@ -139,7 +147,7 @@ int main(int argc,char *argv[])
      {
 	  visameny(växelkurs);
 
-	  int val = läsval();
+	  int val = funktionsval();
 
 	  switch (val)
 	  {
@@ -151,8 +159,8 @@ int main(int argc,char *argv[])
 	  case VARUPRISER:
 	       /* mata in olika saker och deras pris i lokal valuta */
 	       /* räkna om med växelkursen till SEK */
-	       summa = frågaefterpris();
-	       summerasummaochkonvertera( summa, växelkurs);
+	       summa = mata_in_priser();
+	       visa_summa_och_konvertera( summa, växelkurs);
 	       break;
 
 	  case AVSLUTA:
