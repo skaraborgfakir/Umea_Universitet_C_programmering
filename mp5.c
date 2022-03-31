@@ -1,5 +1,12 @@
 /*
- * Time-stamp: <2022-03-31 11:34:51 stefan>
+ * Time-stamp: <2022-03-31 23:12:33 stefan>
+ *
+ * Stefan Niskanen Skoglund
+ * ens21snd
+ *
+ * https://github.com/skaraborgfakir/Umea_Universitet_C_programmering
+ *
+ * åäö
  */
 
 #include <stdio.h>
@@ -11,27 +18,32 @@
 
 /*
  * mp5.pdf: punkt 1.1 i programflödet
+ *
+ * skriver ut tillgängliga funktionsval i programmet
  */
-void visameny()
+void visameny(float kurs)
 {
-     char *huvud = "Your shopping assistant";
-     struct val {
-	  int valnr;
-	  char *beskrivning;
-     };
-     struct val tillgängligaval[ANTALVAL] = {
-	  { VALNYKURS,  "Set exchange rate" },
-	  { VARUPRISER, "Convert prices from the foreign currency" },
-	  { AVSLUTA,    "End" }
-     };
+     /* struct val { */
+     /*		  int valnr; */
+     /*		  char *beskrivning; */
+     /* }; */
+     /* struct val tillgängligaval[ANTALVAL] = { */
+     /*		  { VALNYKURS,  "Set exchange rate in SEK (current rate: %f)" }, */
+     /*		  { VARUPRISER, "Convert prices from the foreign currency" }, */
+     /*		  { AVSLUTA,    "End" } */
+     /* }; */
 
-     printf( "%s\n\n", huvud);
-     for (int i = 0 ; i < ANTALVAL ; i++)
-     {
-	  printf( "%d. %s\n",
-		  tillgängligaval[i].valnr,
-		  tillgängligaval[i].beskrivning);
-     }
+     /* for (int i = 0 ; i < ANTALVAL ; i++) */
+     /* { */
+     /*		  printf( "%d. %s\n", */
+     /*			  tillgängligaval[i].valnr, */
+     /*			  tillgängligaval[i].beskrivning); */
+     /* } */
+
+     printf( "\n");
+     printf( "1. Set exchange rate in SEK (current rate: %.2f)\n", kurs);
+     printf( "2. Convert prices from the foreign currency\n");
+     printf( "3. End\n");
 }
 
 /*
@@ -39,7 +51,13 @@ void visameny()
  */
 int läsval()
 {
-     return 0;
+     int val = 0;
+
+     printf( "\n");
+     printf( "Give your choice (1 - %d): ", ANTALVAL);
+     scanf( "%d", &val);
+
+     return val;
 }
 
 /*
@@ -47,7 +65,11 @@ int läsval()
  */
 float valutakurs()
 {
-     return 10.0;
+     float ny_växelkurs;
+     printf( "\n");
+     printf( "Give exchange rate : ");
+     scanf("%f", &ny_växelkurs);
+     return ny_växelkurs;
 }
 
 /*
@@ -60,9 +82,36 @@ float summerapriser()
 
 /*
  * mp5.pdf: punkt 1.4.1.1 i programflödet
+ *
+ * ska anropas från summerapriser (krav på implementationen)
  */
-void frågaefterpris()
+float frågaefterpris()
 {
+     float pris  = 0.0;
+     float summa = 0.0;
+     int   klart = 0;
+
+     printf( "\n");
+     /*
+      * avsluta efter att ett negativt tal matas in
+      */
+     do
+     {
+	  printf( "Give price (finish with < 0): ");
+	  scanf( "%f", &pris);
+
+	  if (pris < 0)
+	  {
+	       klart = 1;
+	  }
+	  else
+	  {
+	       summa += pris;
+	  }
+     }
+     while (!klart);
+
+     return summa;
 }
 
 /*
@@ -71,7 +120,8 @@ void frågaefterpris()
 void summerasummaochkonvertera( float summa,     /* i lokal valuta */
 				float valutakurs /* omräkning till SEK */ )
 {
-     printf( "summa: %f (lokal valuta) %f (SEK)\n",
+     printf( "\n");
+     printf( "Sum in foreign currency: %.2f\nSum in SEK: %.2f\n",
 	     summa,
 	     summa * valutakurs);
 }
@@ -79,15 +129,44 @@ void summerasummaochkonvertera( float summa,     /* i lokal valuta */
 
 int main(int argc,char *argv[])
 {
-     int stop = 0;
+     int done = 0;
+     float växelkurs = 1.0;
+     float summa = 1.0;
+
+     printf( "\nYour shopping assistant\n");
 
      do
      {
-	  visameny();
+	  visameny(växelkurs);
 
-	  stop = 1;
+	  int val = läsval();
+
+	  switch (val)
+	  {
+	  case VALNYKURS:
+	       /* modifiera använd växelkurs */
+	       växelkurs = valutakurs();
+	       break;
+
+	  case VARUPRISER:
+	       /* mata in olika saker och deras pris i lokal valuta */
+	       /* räkna om med växelkursen till SEK */
+	       summa = frågaefterpris();
+	       summerasummaochkonvertera( summa, växelkurs);
+	       break;
+
+	  case AVSLUTA:
+	       done = 1;
+	       break;
+
+	  default:
+	       printf( "\n");
+	       printf( "Not a valid choice!\n");
+	  };
      }
-     while (!stop);
+     while (!done);
+
+     printf( "\nEnd of program!\n\n");
 
      return 0;
 }
@@ -95,6 +174,6 @@ int main(int argc,char *argv[])
 /*
  * Local Variables:
  * c-file-style: "k&r"
- * compile-command: "/usr/bin/gcc mp5.c -o mp5"
+ * compile-command: "/usr/bin/gcc -Wall --std=c99 mp5.c -o mp5"
  * End:
  */
