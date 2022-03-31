@@ -1,5 +1,5 @@
 /*
- * Time-stamp: <2022-03-31 23:56:20 stefan>
+ * Time-stamp: <2022-04-01 00:05:45 stefan>
  *
  * Stefan Niskanen Skoglund
  * ens21snd
@@ -36,8 +36,7 @@ int funktionsval()
 {
      int val = 0;
 
-     printf( "\n");
-     printf( "Give your choice (1 - %d): ", ANTALVAL);
+     printf( "\nGive your choice (1 - %d): ", ANTALVAL);
      scanf( "%d", &val);
 
      return val;
@@ -50,8 +49,7 @@ float valutakurs()
 {
      float ny_kurs;
 
-     printf( "\n");
-     printf( "Give exchange rate: ");
+     printf( "\nGive exchange rate: ");
      scanf("%f", &ny_kurs);
 
      return ny_kurs;
@@ -111,8 +109,7 @@ float mata_in_priser()
 void visa_summa_och_konvertera( float summa,     /* i lokal valuta */
 				float valutakurs /* omräkning till SEK */ )
 {
-     printf( "\n");
-     printf( "Sum in foreign currency: %.2f\nSum in SEK: %.2f\n",
+     printf( "\nSum in foreign currency: %.2f\nSum in SEK: %.2f\n",
 	     summa,
 	     summa * valutakurs);
 }
@@ -151,8 +148,7 @@ int main(int argc,char *argv[])
 	       break;
 
 	  default:
-	       printf( "\n");
-	       printf( "Not a valid choice!\n");
+	       printf( "\nNot a valid choice!\n");
 	  };
      }
      while (!done);
