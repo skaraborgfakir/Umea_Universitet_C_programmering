@@ -1,5 +1,5 @@
 /*
- * Time-stamp: <2022-03-31 23:49:03 stefan>
+ * Time-stamp: <2022-03-31 23:56:20 stefan>
  *
  * Stefan Niskanen Skoglund
  * ens21snd
@@ -23,23 +23,6 @@
  */
 void visameny(float kurs)
 {
-     /* struct val { */
-     /*		  int valnr; */
-     /*		  char *beskrivning; */
-     /* }; */
-     /* struct val tillgängligaval[ANTALVAL] = { */
-     /*		  { VALNYKURS,  "Set exchange rate in SEK (current rate: %f)" }, */
-     /*		  { VARUPRISER, "Convert prices from the foreign currency" }, */
-     /*		  { AVSLUTA,    "End" } */
-     /* }; */
-
-     /* for (int i = 0 ; i < ANTALVAL ; i++) */
-     /* { */
-     /*		  printf( "%d. %s\n", */
-     /*			  tillgängligaval[i].valnr, */
-     /*			  tillgängligaval[i].beskrivning); */
-     /* } */
-
      printf( "\n");
      printf( "1. Set exchange rate in SEK (current rate: %.2f)\n", kurs);
      printf( "2. Convert prices from the foreign currency\n");
@@ -68,10 +51,25 @@ float valutakurs()
      float ny_kurs;
 
      printf( "\n");
-     printf( "Give exchange rate : ");
+     printf( "Give exchange rate: ");
      scanf("%f", &ny_kurs);
 
      return ny_kurs;
+}
+
+/*
+ * mp5.pdf: punkt 1.4.1.1 i programflödet
+ *
+ * ska anropas från summerapriser (krav på implementationen)
+ */
+float mata_in_nytt_pris()
+{
+     float pris  = 0.0;
+
+     printf( "Give price (finish with < 0): ");
+     scanf( "%f", &pris);
+
+     return pris;
 }
 
 /*
@@ -108,21 +106,6 @@ float mata_in_priser()
 }
 
 /*
- * mp5.pdf: punkt 1.4.1.1 i programflödet
- *
- * ska anropas från summerapriser (krav på implementationen)
- */
-float mata_in_nytt_pris()
-{
-     float pris  = 0.0;
-
-     printf( "Give price (finish with < 0): ");
-     scanf( "%f", &pris);
-
-     return pris;
-}
-
-/*
  * mp5.pdf: punkt 1.4.2 i programflödet
  */
 void visa_summa_och_konvertera( float summa,     /* i lokal valuta */
@@ -138,29 +121,29 @@ void visa_summa_och_konvertera( float summa,     /* i lokal valuta */
 int main(int argc,char *argv[])
 {
      int done = 0;
-     float växelkurs = 1.0;
+     float kurs = 1.0;
      float summa = 1.0;
 
      printf( "\nYour shopping assistant\n");
 
      do
      {
-	  visameny(växelkurs);
+	  visameny(kurs);
 
 	  int val = funktionsval();
 
 	  switch (val)
 	  {
 	  case VALNYKURS:
-	       /* modifiera använd växelkurs */
-	       växelkurs = valutakurs();
+	       /* modifiera använd kurs */
+	       kurs = valutakurs();
 	       break;
 
 	  case VARUPRISER:
 	       /* mata in olika saker och deras pris i lokal valuta */
-	       /* räkna om med växelkursen till SEK */
+	       /* räkna om med kursen till SEK */
 	       summa = mata_in_priser();
-	       visa_summa_och_konvertera( summa, växelkurs);
+	       visa_summa_och_konvertera( summa, kurs);
 	       break;
 
 	  case AVSLUTA:
