@@ -1,5 +1,5 @@
 /*
- * Time-stamp: <2022-03-31 11:17:46 stefan>
+ * Time-stamp: <2022-03-31 11:34:51 stefan>
  */
 
 #include <stdio.h>
@@ -79,7 +79,15 @@ void summerasummaochkonvertera( float summa,     /* i lokal valuta */
 
 int main(int argc,char *argv[])
 {
-     visameny();
+     int stop = 0;
+
+     do
+     {
+	  visameny();
+
+	  stop = 1;
+     }
+     while (!stop);
 
      return 0;
 }
