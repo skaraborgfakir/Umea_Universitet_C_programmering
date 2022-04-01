@@ -1,12 +1,10 @@
 /*
- * Time-stamp: <2022-04-01 21:33:38 stefan>
+ * Time-stamp: <2022-04-01 21:48:13 stefan>
  *
  * Stefan Niskanen Skoglund
  * ens21snd
  *
  * https://github.com/skaraborgfakir/Umea_Universitet_C_programmering
- *
- * åäö
  */
 
 #include <stdio.h>
