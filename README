@@ -1,2 +1,6 @@
-README:
-  mästarprov och laborationer för en C-progammeringskurs vid Umeå universitet
+Mästarprov och laborationer för en C-progammeringskurs vid Umeå universitet
+
+Laborationerna har grenar:
+  mp5 (mästarprov)   - resehjälp för omräkning av sakers priser till SEK
+  mp8 (mästarprov 8) - Conways Game of life
+  mp9 (mästarprov 9) - Conways Game of life
