@@ -1,8 +1,10 @@
 /*
- * Time-stamp: <2022-04-01 21:48:13 stefan>
+ * Time-stamp: <2022-04-01 22:05:08 stefan>
  *
  * Stefan Niskanen Skoglund
  * ens21snd
+ *
+ * mp5.c (mästarprov 5)
  *
  * https://github.com/skaraborgfakir/Umea_Universitet_C_programmering
  */
