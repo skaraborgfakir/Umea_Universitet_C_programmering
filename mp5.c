@@ -1,5 +1,5 @@
 /*
- * Time-stamp: <2022-04-01 21:24:44 stefan>
+ * Time-stamp: <2022-04-01 21:29:34 stefan>
  *
  * Stefan Niskanen Skoglund
  * ens21snd
@@ -20,11 +20,12 @@
  * mp5.pdf: Krav på implementationen: 1.1 ska implementeras som en separat funktion
  *
  * skriver ut tillgängliga funktionsval i programmet
+ * och inställd/vald valutakurs
  */
-void visameny(float kurs)
+void visameny(float valutakurs)
 {
      printf( "\n");
-     printf( "1. Set exchange rate in SEK (current rate: %.2f)\n", kurs);
+     printf( "1. Set exchange rate in SEK (current rate: %.2f)\n", valutakurs);
      printf( "2. Convert prices from the foreign currency\n");
      printf( "3. End\n");
 }
@@ -118,29 +119,29 @@ void visa_summa_och_konvertera( float summa,     /* i lokal valuta */
 int main(int argc,char *argv[])
 {
      int done = 0;
-     float kurs = 1.0;
+     float valutakurs = 1.0;
      float summa = 1.0;
 
      printf( "\nYour shopping assistant\n");
 
      do
      {
-	  visameny(kurs);
+	  visameny(valutakurs);
 
 	  int val = funktionsval();
 
 	  switch (val)
 	  {
 	  case VALNYKURS:
-	       /* modifiera använd kurs */
-	       kurs = valutakurs();
+	       /* 1.3 i programflödet - modifiera använd valutakurs */
+	       valutakurs = valutakurs();
 	       break;
 
 	  case VARUPRISER:
-	       /* mata in olika saker och deras pris i lokal valuta */
-	       /* räkna om med kursen till SEK */
-	       summa = mata_in_priser();
-	       visa_summa_och_konvertera( summa, kurs);
+	       /* 1.4 i programflödet - mata in olika saker och deras pris i lokal valuta */
+	       /* som räknas om till SEK med vald valutakurs  */
+	       summa = mata_in_priser();                /* fortsätter till användaren är nöjd */
+	       visa_summa_och_konvertera( summa, valutakurs); /* räknas om med vald valutakurs till SEK och skrivs ut */
 	       break;
 
 	  case AVSLUTA:
