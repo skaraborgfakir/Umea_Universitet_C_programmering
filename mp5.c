@@ -1,5 +1,5 @@
 /*
- * Time-stamp: <2022-04-01 21:29:34 stefan>
+ * Time-stamp: <2022-04-01 21:32:53 stefan>
  *
  * Stefan Niskanen Skoglund
  * ens21snd
@@ -22,7 +22,7 @@
  * skriver ut tillgängliga funktionsval i programmet
  * och inställd/vald valutakurs
  */
-void visameny(float valutakurs)
+void visa_meny(float valutakurs)
 {
      printf( "\n");
      printf( "1. Set exchange rate in SEK (current rate: %.2f)\n", valutakurs);
@@ -46,7 +46,7 @@ int funktionsval()
 /*
  * mp5.pdf: Krav på implementationen: 1.3.1 ska implementeras som en separat funktion
  */
-float valutakurs()
+float ny_valutakurs()
 {
      float ny_kurs;
 
@@ -126,7 +126,7 @@ int main(int argc,char *argv[])
 
      do
      {
-	  visameny(valutakurs);
+	  visa_meny(valutakurs);
 
 	  int val = funktionsval();
 
@@ -134,7 +134,7 @@ int main(int argc,char *argv[])
 	  {
 	  case VALNYKURS:
 	       /* 1.3 i programflödet - modifiera använd valutakurs */
-	       valutakurs = valutakurs();
+	       valutakurs = ny_valutakurs();
 	       break;
 
 	  case VARUPRISER:
