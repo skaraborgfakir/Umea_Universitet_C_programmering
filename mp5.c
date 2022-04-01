@@ -1,5 +1,5 @@
 /*
- * Time-stamp: <2022-04-01 00:05:45 stefan>
+ * Time-stamp: <2022-04-01 21:24:44 stefan>
  *
  * Stefan Niskanen Skoglund
  * ens21snd
@@ -17,7 +17,7 @@
 #define AVSLUTA 3
 
 /*
- * mp5.pdf: punkt 1.1 i programflödet
+ * mp5.pdf: Krav på implementationen: 1.1 ska implementeras som en separat funktion
  *
  * skriver ut tillgängliga funktionsval i programmet
  */
@@ -30,7 +30,7 @@ void visameny(float kurs)
 }
 
 /*
- * mp5.pdf: punkt 1.2 i programflödet
+ * mp5.pdf: Krav på implementationen: 1.2 ska implementeras som en separat funktion
  */
 int funktionsval()
 {
@@ -43,7 +43,7 @@ int funktionsval()
 }
 
 /*
- * mp5.pdf: punkt 1.3.1 i programflödet
+ * mp5.pdf: Krav på implementationen: 1.3.1 ska implementeras som en separat funktion
  */
 float valutakurs()
 {
@@ -56,9 +56,8 @@ float valutakurs()
 }
 
 /*
- * mp5.pdf: punkt 1.4.1.1 i programflödet
- *
- * ska anropas från summerapriser (krav på implementationen)
+ * mp5.pdf: Krav på implementationen: 1.4.1.1 ska implementeras som en separat funktion
+ *          Krav på implementationen: ska anropas från mata_in_priser (1.4.1 i flödet)
  */
 float mata_in_nytt_pris()
 {
@@ -71,8 +70,9 @@ float mata_in_nytt_pris()
 }
 
 /*
- * mp5.pdf: punkt 1.4.1 i programflödet
- * separat funktion som
+ * mp5.pdf: Krav på implementationen: 1.4.1 ska implementeras som en separat funktion
+ *
+ * Funktion i 1.4.1.1 ska anropas av denna
  */
 float mata_in_priser()
 {
@@ -104,7 +104,7 @@ float mata_in_priser()
 }
 
 /*
- * mp5.pdf: punkt 1.4.2 i programflödet
+ * mp5.pdf: Krav på implementationen: 1.4.2 ska implementeras som en separat funktion
  */
 void visa_summa_och_konvertera( float summa,     /* i lokal valuta */
 				float valutakurs /* omräkning till SEK */ )
