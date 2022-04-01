@@ -1,5 +1,5 @@
 /*
- * Time-stamp: <2022-04-01 21:32:53 stefan>
+ * Time-stamp: <2022-04-01 21:33:38 stefan>
  *
  * Stefan Niskanen Skoglund
  * ens21snd
@@ -118,7 +118,7 @@ void visa_summa_och_konvertera( float summa,     /* i lokal valuta */
 
 int main(int argc,char *argv[])
 {
-     int done = 0;
+     int klart = 0;
      float valutakurs = 1.0;
      float summa = 1.0;
 
@@ -145,14 +145,14 @@ int main(int argc,char *argv[])
 	       break;
 
 	  case AVSLUTA:
-	       done = 1;
+	       klart = 1;
 	       break;
 
 	  default:
 	       printf( "\nNot a valid choice!\n");
 	  };
      }
-     while (!done);
+     while (!klart);
 
      printf( "\nEnd of program!\n\n");
 
