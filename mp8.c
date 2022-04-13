@@ -105,11 +105,11 @@ void init_field( const int rows, const int cols,
 void load_glider(const int rows, const int cols,
 		 cell field[rows][cols])
 {
-	field[0][1].current = ALIVE;
-	field[1][2].current = ALIVE;
-	field[2][0].current = ALIVE;
-	field[2][1].current = ALIVE;
-	field[2][2].current = ALIVE;
+  field[0][1].current = ALIVE;
+  field[1][2].current = ALIVE;
+  field[2][0].current = ALIVE;
+  field[2][1].current = ALIVE;
+  field[2][2].current = ALIVE;
 }
 
 
@@ -121,9 +121,9 @@ void load_glider(const int rows, const int cols,
 void load_semaphore(const int rows, const int cols,
 		    cell field[rows][cols])
 {
-	field[8][1].current = ALIVE;
-	field[8][2].current = ALIVE;
-	field[8][3].current = ALIVE;
+  field[8][1].current = ALIVE;
+  field[8][2].current = ALIVE;
+  field[8][3].current = ALIVE;
 }
 
 
@@ -149,10 +149,12 @@ void load_random(const int rows, const int cols,
 void load_custom(const int rows, const int cols,
 		 cell field[rows][cols])
 {
-	printf("Give custom format string: ");
-	do {
-		int r, c;
-		scanf("%d,%d", &r, &c);
-		field[r][c].current = ALIVE;
-	} while (getchar() != '\n');
+  printf( "Give custom format string: ");
+  do
+    {
+      int r, c;
+    scanf( "%d,%d", &r, &c);
+    field[r][c].current = ALIVE;
+  }
+  while ( getchar() != '\n');
 }
