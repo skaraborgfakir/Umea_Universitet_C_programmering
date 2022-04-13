@@ -3,11 +3,11 @@
  * Spring 22
  * Mastery test 8
  *
+ * Date:         Time-stamp: <2022-04-13 18:22:37 stefan>
  * File:         mp8.c
  * Description:  A simple implementation of Conway's Game of Life.
- * Author:
- * CS username:
- * Date:
+ * Author:       Stefan Niskanen Skoglund
+ * CS username:  ens21snd
  * Input:        Choice of initial configuration and then instruction
  *               to step or exit.
  * Output:       Prints the game field in each step.
@@ -24,8 +24,8 @@
 
 /* Declaration of data structure */
 typedef struct {
-	char current;
-	char next;
+  char current;
+  char next;
 } cell;
 
 /* Declaration of functions */
@@ -45,7 +45,7 @@ void load_custom   ( const int rows, const int cols, cell field[rows][cols]);
 
 int main( void)
 {
-	return 0;
+  return 0;
 }
 
 
@@ -57,43 +57,43 @@ int main( void)
  */
 
 void init_field( const int rows, const int cols,
-		cell field[rows][cols])
+		 cell field[rows][cols])
 {
-	for (int r = 0 ; r < rows ; r++) {
-		for (int c = 0 ; c < cols ; c++) {
-			field[r][c].current = DEAD;
-		}
-	}
+  for (int r = 0 ; r < rows ; r++) {
+    for (int c = 0 ; c < cols ; c++) {
+      field[r][c].current = DEAD;
+    }
+  }
 
-	printf("Select field spec to load ");
-	printf("([G]lider, [S]emaphore, ");
-	printf("[R]andom or [C]ustom): ");
+  printf("Select field spec to load ");
+  printf("([G]lider, [S]emaphore, ");
+  printf("[R]andom or [C]ustom): ");
 
-	int ch = getchar();
+  int ch = getchar();
 
-	/* Ignore following newline */
-	if (ch != '\n') {
-		getchar();
-	}
+  /* Ignore following newline */
+  if (ch != '\n') {
+    getchar();
+  }
 
-	switch (ch) {
-		case 'g':
-		case 'G':
-			load_glider(rows, cols, field);
-			break;
-		case 's':
-		case 'S':
-			load_semaphore(rows, cols, field);
-			break;
-		case 'r':
-		case 'R':
-			load_random(rows, cols, field);
-			break;
-		case 'c':
-		case 'C':
-		default:
-			load_custom(rows, cols, field);
-	}
+  switch (ch) {
+  case 'g':
+  case 'G':
+    load_glider(rows, cols, field);
+    break;
+  case 's':
+  case 'S':
+    load_semaphore(rows, cols, field);
+    break;
+  case 'r':
+  case 'R':
+    load_random(rows, cols, field);
+    break;
+  case 'c':
+  case 'C':
+  default:
+    load_custom(rows, cols, field);
+  }
 }
 
 
