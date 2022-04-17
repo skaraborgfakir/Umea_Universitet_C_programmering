@@ -3,7 +3,7 @@
  * Spring 22
  * Mastery test 8
  *
- * Date:         Time-stamp: <2022-04-17 22:17:06 stefan>
+ * Date:         Time-stamp: <2022-04-17 22:18:57 stefan>
  * File:         mp8.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -72,6 +72,8 @@ int main( void)
       cellutskrift( nrows, ncols, cellerna);
 
       /* iterering igenom cellerna för att hitta nödvändiga förändringar
+       *
+       * se: https://conwaylife.com/wiki/Conway%27s_Game_of_Life
        */
       for ( int rad = 0 ; rad < nrows ; rad++)
       {
