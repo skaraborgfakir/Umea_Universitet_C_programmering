@@ -3,7 +3,7 @@
  * Spring 22
  * Mastery test 8
  *
- * Date:         Time-stamp: <2022-04-14 16:53:45 stefan>
+ * Date:         Time-stamp: <2022-04-17 22:17:06 stefan>
  * File:         mp8.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -42,7 +42,7 @@ void load_glider   ( const int rows, const int cols, cell field[rows][cols]);
 void load_semaphore( const int rows, const int cols, cell field[rows][cols]);
 void load_random   ( const int rows, const int cols, cell field[rows][cols]);
 void load_custom   ( const int rows, const int cols, cell field[rows][cols]);
-void atlasutskrift ( const int nrows, const int ncols, cell field[nrows][ncols]);
+void cellutskrift  ( const int nrows, const int ncols, cell field[nrows][ncols]);
 int antalgrannar   ( const int nrows, const int ncols, cell atlas[nrows][ncols], const int row, const int col);
 
 /* Description: Start and run games, interact with the user.
@@ -60,17 +60,68 @@ int main( void)
     *
     * exemplet använder 20x20 så låt oss göra så
     */
-
-   cell atlas[nrows][ncols];
-   init_field( nrows, ncols, atlas);
-
    int avsluta = 0;
+   cell cellerna[nrows][ncols];
    const int bufferdim = 10;
    char buffer[bufferdim];
 
+   init_field( nrows, ncols, cellerna);
+
    while(!avsluta)
    {
-      atlasutskrift( nrows, ncols, atlas);
+      cellutskrift( nrows, ncols, cellerna);
+
+      /* iterering igenom cellerna för att hitta nödvändiga förändringar
+       */
+      for ( int rad = 0 ; rad < nrows ; rad++)
+      {
+	 for ( int kolumn = 0 ; kolumn < ncols ; kolumn++)
+	 {
+	    int grannar = antalgrannar( nrows, ncols, cellerna, rad, kolumn);
+
+	    switch ( cellerna[rad][kolumn].current )
+	    {
+	       case ALIVE:
+		  if ( grannar < 2 )      /* inte tillräckligt mycket stöd från grannar för att överleva */
+		     cellerna[rad][kolumn].next = DEAD;
+		  else if ( grannar > 3 ) /* överbefolkning */
+		     cellerna[rad][kolumn].next = DEAD;
+		  else                    /* implicit två eller tre levande grannar - överlever */
+		     cellerna[rad][kolumn].next = ALIVE;
+		  break;
+
+	       case DEAD:
+	       default:
+		  if ( grannar == 3) /* tre levande grannar så en klon migrerar till cellen */
+		     cellerna[rad][kolumn].next = ALIVE;
+		  else
+		     cellerna[rad][kolumn].next = DEAD;
+	    }
+	 }
+      }
+
+      /*
+       * låt en generation gå
+       */
+      for ( int rad = 0 ; rad < nrows ; rad++)
+      {
+	 for ( int kolumn = 0 ; kolumn < ncols ; kolumn++)
+	 {
+	    switch ( cellerna[rad][kolumn].current )
+	    {
+	       case ALIVE:
+		  if ( cellerna[rad][kolumn].next == ALIVE )
+		     cellerna[rad][kolumn].current = ALIVE;
+		  else
+		     cellerna[rad][kolumn].current = DEAD;
+		  break;
+
+	       case DEAD:
+		  if ( cellerna[rad][kolumn].next == ALIVE )
+		     cellerna[rad][kolumn].current = ALIVE;
+	    }
+	 }
+      }
 
       printf( "Select one of the following options:\n(enter) Step\n(any)   Exit\n");
 
@@ -90,21 +141,39 @@ int main( void)
    return 0;
 }
 
-int antalgrannar( const int nrows, const int ncols, cell atlas[nrows][ncols],
-		  const int row, const int col)
+int antalgrannar( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner],
+		  const int cellens_rad, const int cellens_kolumn)
 {
+   /*
+    * algoritm:
+    *   påbörja sökning i cell snett uppåt vänster från aktuell cell
+    *   därefter sök av radvis, börja i vänster
+    *   rad två, den mittersta är aktuell cell
+    */
+   int antalgrannar = 0;
 
-   return 0;
+   for ( int rad = cellens_rad-1 ; rad <= cellens_rad + 1 ; rad++) /* sök igenom 3 rader */
+   {
+      for ( int kolumn = cellens_kolumn-1 ; kolumn <= cellens_kolumn + 1 ; kolumn++) /* sök igenom 3 kolumner */
+	 if ( rad >= 0 && kolumn >= 0                            &&  /* kontroll att sökningen är i cellerna */
+	      rad < antal_rader && kolumn < antal_kolumner       &&  /* inte nedanför eller för långt till höger */
+	      !( rad == cellens_rad && kolumn == cellens_kolumn) &&  /* se till att inte få med cellen självt !!! */
+	      cellerna[rad][kolumn].current == ALIVE)                /* lever grannen ? */
+	    antalgrannar ++;
+   }
+
+   return antalgrannar;
 }
 
 
 /*
  */
-void atlasutskrift( const int nrows, const int ncols, cell atlas[nrows][ncols] )
+void cellutskrift( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner] )
 {
-   for (int r = 0 ; r < nrows ; r++) {
-      for (int c = 0 ; c < ncols ; c++) {
-	 putc( atlas[r][c].current, stdout);
+   for (int rad = 0 ; rad < antal_rader ; rad++) {
+      for (int kolumn = 0 ; kolumn < antal_kolumner ; kolumn++) {
+	 putc( cellerna[rad][kolumn].current, stdout);
+	 printf( " ");
       }
       putc( '\n', stdout);
    }
