@@ -1,5 +1,6 @@
 /*
  * Programmering i C
+ * Time-stamp: <2022-04-18 12:53:11 stefan>
  * Spring 22
  * Mastery test 8
  *
