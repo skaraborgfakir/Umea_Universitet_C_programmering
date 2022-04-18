@@ -1,10 +1,10 @@
 /*
  * Programmering i C
  * Spring 22
- * Mastery test 8
+ * Mastery test 9
  *
- * Date:         Time-stamp: <2022-04-14 16:53:45 stefan>
- * File:         mp8.c
+ * Date:         Time-stamp: <2022-04-18 14:19:40 stefan>
+ * File:         mp9.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
  * CS username:  ens21snd
@@ -29,19 +29,16 @@ typedef struct {
    char current;
    char next;
 } cell;
-/* exemplet i peppar använder
- *
- * exemplet använder 20x20 så låt oss göra så
- */
-const int ncols = 20;
-const int nrows = 20;
+
+typedef struct {
+   int rows;
+   int cols;
+
+   cell **cells;
+} field;
 
 /* Declaration of functions */
 void init_field    ( const int rows, const int cols, cell field[rows][cols]);
-void load_glider   ( const int rows, const int cols, cell field[rows][cols]);
-void load_semaphore( const int rows, const int cols, cell field[rows][cols]);
-void load_random   ( const int rows, const int cols, cell field[rows][cols]);
-void load_custom   ( const int rows, const int cols, cell field[rows][cols]);
 void atlasutskrift ( const int nrows, const int ncols, cell field[nrows][ncols]);
 int antalgrannar   ( const int nrows, const int ncols, cell atlas[nrows][ncols], const int row, const int col);
 
@@ -159,97 +156,9 @@ void init_field( const int rows, const int cols,
    }
 }
 
-
-/* Description: Inserts a glider into the field.
- * Input:       The field array and its size.
- * Output:      The field array is updated.
- *
- * given av uppgiften - ändra inte
- */
-
-void load_glider(const int rows, const int cols,
-		 cell field[rows][cols])
-{
-   field[0][1].current = ALIVE;
-   field[1][2].current = ALIVE;
-   field[2][0].current = ALIVE;
-   field[2][1].current = ALIVE;
-   field[2][2].current = ALIVE;
-}
-
-
-/* Description: Inserts a semaphore into the field.
- * Input:       The field array and its size.
- * Output:      The field array is updated.
- *
- * given av uppgiften - ändra inte
- */
-
-void load_semaphore(const int rows, const int cols,
-		    cell field[rows][cols])
-{
-   field[8][1].current = ALIVE;
-   field[8][2].current = ALIVE;
-   field[8][3].current = ALIVE;
-}
-
-
-/* Description: Inserts a random structure into the field.
- * Input:       The field array and its size.
- * Output:      The field array is updated. There is a 50 % chance
- *              that a cell is alive.
- *
- * ej klar - skrives efter egen skön
- */
-
-void load_random(const int rows, const int cols,
-		 cell field[rows][cols])
-{
-   /*
-    * slumptalet behöver ha en seed - klassisk, använd klockan
-    */
-
-   for (int x = 0; x < cols; x++)
-   {
-      for (int y = 0; y < rows; y++)
-      {
-	 double slump = drand48();
-	 /*
-	  * högre än 0,5 lev !
-	  */
-	 if ( slump > 0.5 )
-	    field[y][x].current = ALIVE;
-	 else
-	    field[y][x].current = DEAD;
-      }
-   }
-}
-
-
-/* Description: Lets the user specify a structure that then
- *              is inserted into the field.
- * Input:       The field array and its size.
- * Output:      The field array is updated.
- *
- * given av uppgiften - ändra inte
- */
-
-void load_custom(const int rows, const int cols,
-		 cell field[rows][cols])
-{
-   printf( "Give custom format string: ");
-   do
-   {
-      int r, c;
-      scanf( "%d,%d", &r, &c);
-      field[r][c].current = ALIVE;
-   }
-   while ( getchar() != '\n');
-}
-
 /*
  * Local Variables:
- * c-file-style: "ellemtel"
+ * c-file-style: "k&r"
  * compile-command: "make"
  * End:
  */
