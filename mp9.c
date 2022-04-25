@@ -3,7 +3,7 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-04-18 14:19:40 stefan>
+ * Date:         Time-stamp: <2022-04-18 17:39:12 stefan>
  * File:         mp9.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -20,36 +20,17 @@
 #include <string.h>
 #include <time.h>
 
-/* Constants, representation of states */
-#define ALIVE 'X'
-#define DEAD '.'
+#include "game_of_life.h"
 
-/* Declaration of data structure */
-typedef struct {
-   char current;
-   char next;
-} cell;
-
-typedef struct {
-   int rows;
-   int cols;
-
-   cell **cells;
-} field;
-
-/* Declaration of functions */
-void init_field    ( const int rows, const int cols, cell field[rows][cols]);
-void atlasutskrift ( const int nrows, const int ncols, cell field[nrows][ncols]);
-int antalgrannar   ( const int nrows, const int ncols, cell atlas[nrows][ncols], const int row, const int col);
+int check_prog_params(int argc, const char *argv[],
+		      FILE **in_file_p, FILE **out_file_p);
 
 /* Description: Start and run games, interact with the user.
- * Input:       About what initial structure and whether to step or
- *              exit.
- * Output:      Prints information to the user, and the game field in
- *              each step.
+ * Input:       About what initial structure and whether to step or exit.
+ * Output:      Prints information to the user, and the game field in each step.
  */
-
-int main( void)
+int main( int argc,
+	  char *argv[])
 {
    /*
     * krav : fixa en värld (matris av celler) med en visst antal positioner
@@ -87,73 +68,39 @@ int main( void)
    return 0;
 }
 
-int antalgrannar( const int nrows, const int ncols, cell atlas[nrows][ncols],
-		  const int row, const int col)
-{
-
-   return 0;
-}
-
-
-/*
+/* Description: Checks the parameters to the program. Checks if the
+ * call to the program has the right number of
+ * parameters. Open the input and output files.
+ * Input: The parameters to the program and two pointers to file
+ *        pointers.
+ * Output: Returns 0 when the files are correctly opened.
+ *         Returns a non-zero value on failure.
  */
-void atlasutskrift( const int nrows, const int ncols, cell atlas[nrows][ncols] )
+int check_prog_params(int argc,
+		      const char *argv[],
+		      FILE **in_file_p,
+		      FILE **out_file_p)
 {
-   for (int r = 0 ; r < nrows ; r++) {
-      for (int c = 0 ; c < ncols ; c++) {
-	 putc( atlas[r][c].current, stdout);
+   if ( argc == 3 )
+   {
+      /*
+       * verifiera att argv[1] är en existerande fil
+       */
+      struct stat in_status;
+      if ( stat( argv[1], &in_status) != 0)
+      {
+	 /* stat misslyckades
+	  */
+	 return ( 1);
       }
-      putc( '\n', stdout);
-   }
-}
-
-/* Description: Initialize all the cells to dead, then asks the user
- *              about which structure to load, and finally load the
- *              structure.
- * Input:       The field array and its size.
- * Output:      The field array is updated.
- *
- * given av uppgiften - ändra inte
- */
-
-void init_field( const int rows, const int cols,
-		 cell field[rows][cols])
-{
-   for (int r = 0 ; r < rows ; r++) {
-      for (int c = 0 ; c < cols ; c++) {
-	 field[r][c].current = DEAD;
+      else
+      {
+	 /* stat lyckades
+	  */
       }
    }
-
-   printf("Select field spec to load ");
-   printf("([G]lider, [S]emaphore, ");
-   printf("[R]andom or [C]ustom): ");
-
-   int ch = getchar();
-
-   /* Ignore following newline */
-   if (ch != '\n') {
-      getchar();
-   }
-
-   switch (ch) {
-      case 'g':
-      case 'G':
-	 load_glider(rows, cols, field);
-	 break;
-      case 's':
-      case 'S':
-	 load_semaphore(rows, cols, field);
-	 break;
-      case 'r':
-      case 'R':
-	 load_random(rows, cols, field);
-	 break;
-      case 'c':
-      case 'C':
-      default:
-	 load_custom(rows, cols, field);
-   }
+   else
+      return (1);
 }
 
 /*
