@@ -3,7 +3,7 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-04-18 17:51:40 stefan>
+ * Date:         Time-stamp: <2022-05-08 19:17:20 stefan>
  * File:         game_of_life_file_handler.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -15,49 +15,72 @@
  */
 
 #include <stdio.h>
+
 #include "game_of_life.h"
 #include "game_of_life_file_handler.h"
 
 /* Description: Loads a configuration to the field structure from a
- * file. It is the responsiblity of the caller to
- * deallocate the dynamically allocated memory in the field
- * structure through a call to the function destroy_field.
- * The file pointed to by fp is closed.
+ *              file. It is the responsiblity of the caller to
+ *              deallocate the dynamically allocated memory in the field
+ *              structure through a call to the function destroy_field.
+ *              The file pointed to by fp is closed.
  * Input: A pointer to where the created field structure should be
  *        assigned and a file pointer to the file with the initial
  *        configuration.
  * Output: Returns 0 on success, the field structure is created
  *         with the configuration from the file.
  *         Returns a non-zero value on failure.
+ *
+ * Krav från uppgiftsektionen för Mästarprov 9:
+ *   3: implementera funktionen load_config_from_file
+ *
+ * Använder allocate_cells definierad i game_of_life.h
  */
 int load_config_from_file(field *the_field, FILE *fp)
 {
-     /* fscanf rekommenderas
-      *
-      * infilen ska redan vara öppnad
-      */
-     int nrows = 0;
-     int ncols = 0;
-     field the_field;
+   /* fscanf rekommenderas
+    *
+    * infilen ska redan vara öppnad
+    */
 
-     int res = fscanf( fp, "%d,%d\n", &field.rows, &field.cols);
-     if ( res != 2)
-     {
-	  /* felaktig input på första raden
-	   */
-	  return 1;
-     }
-     else
-     {
-	  cell ** cells = allocate_field( &the_field);
+   int res = fscanf(fp, "%d,%d\n", &(the_field->rows), &(the_field->cols));
+   if (res != 2)
+   {
+      /* felaktig input på första raden - fick vi två tal ? - NEJ
+       */
+      fclose(fp);
+      return(1);
+   }
+   else
+   {
+      the_field -> cells = allocate_cells(the_field->rows, the_field->cols);
 
-	  if ( the_field.cells == NULL )
-	  {
-	       /* misslyckad allokering
-		*/
-	       return 1;
-	  }
-     }
+      char buffer[the_field->cols + 1];
+
+      for (int y = 0; y < the_field->rows; y++)
+      {
+	 int res = fscanf(fp, "%s", buffer);
+	 printf( "%s\n", buffer);
+
+	 if ( res != 1 )
+	    return(1);
+
+	 for (int x = 0; x < the_field -> cols; x++)
+	 {
+	    ((cell*)the_field->cells[y])[x].current = DEAD;
+
+	    if( buffer[x] == '*')
+	    {
+	       ((cell*)the_field->cells[y])[x].current = ALIVE;
+	    }
+	 }
+      }
+
+      return( 0);
+   }
+
+   fclose( fp);
+   return(0);
 }
 
 /* Description: Saves the current configuration of the field to a
@@ -67,16 +90,39 @@ int load_config_from_file(field *the_field, FILE *fp)
  * Output: Returns 0 on success, the current configuration in the
  *         field is written to the file.
  *         Returns a non-zero value on failure.
+ *
+ * Krav från uppgiftsektionen för Mästarprov 9:
+ *   3: implementera funktionen save_config_to_file
+ *
+ * Använder dispose_field definierad i game_of_life.h ?
  */
 int save_config_to_file(const field the_field, FILE *fp)
 {
-     /* fprintf rekommenderas
-      */
+   fprintf(fp, "%d,%d\n", the_field.rows, the_field.cols);
+   for (int y=0; y< the_field.rows; y++)
+   {
+      for (int x=0; x<the_field.cols; x++)
+      {
+	 switch(the_field.cells[y][x].current)
+	 {
+	    case ALIVE:
+	       fprintf(fp, "%s", "*");
+	       break;
+	    case DEAD:
+	    default:
+	       fprintf(fp, "%d", 0);
+	 }
+      }
+      fprintf(fp, "\n");
+   }
+
+   fclose(fp);
+   return(0);
 }
 
 /*
  * Local Variables:
- * c-file-style: "k&r"
+ * c-file-style: "ellemtel"
  * compile-command: "make"
  * End:
  */

@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-# Time-stamp: <2022-04-18 14:17:24 stefan>
+# Time-stamp: <2022-05-05 20:12:17 stefan>
 #
 
 INCLUDES = game_of_life.h game_of_life_file_handler.h
@@ -8,10 +8,10 @@ MP9OBJS = $(MP9SOURCE_C:.c=.o)
 #MP9OBJS : $(INCLUDES)
 
 CC = /usr/bin/gcc
-CFLAGS = -Wall -std=c99
+CFLAGS = -g -Wall -std=c99
 
 %.o: %.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) -c $(CFLAGS) $< -o $@
 
 all: mp9
 

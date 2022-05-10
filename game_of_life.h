@@ -3,52 +3,62 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-04-18 17:50:21 stefan>
+ * Date:         Time-stamp: <2022-05-07 23:12:37 stefan>
  * File:         game_of_life_file_handler.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
  * CS username:  ens21snd
- * Input:        Choice of initial configuration and then instruction
- *               to step or exit.
- * Output:       Prints the game field in each step.
- * Limitations:  No validation of input.
  */
 
 #ifndef GAME_OF_LIFE_H
 #define GAME_OF_LIFE_H
 
-/* Constants, representation of states */
+/* Constants, representation of states
+ */
 #define ALIVE 'X'
 #define DEAD '.'
 
-/* Declaration of data structure */
+/* Declaration of data structure
+ */
 typedef struct {
-  char current;
-  char next;
+   char current;
+   char next;
 } cell;
 
+/* Krav från uppgiftsektionen för Mästarprov 9:
+ *   2: skapa en struktur som beskriver världen som organismerna ska vara i
+ */
 typedef struct {
-  int rows;
-  int cols;
+   int rows;
+   int cols;
 
-  cell **cells;
+   cell **cells;  /* pekare-till-pekare (eller pekare till vektor av pekare till cell-vektorer) */
 } field;
 
-/* Declaration of functions */
-/* livstidshantering av field struktur - använder malloc !
+/* Krav från uppgiftsektionen för Mästarprov 9:
+ *   4: implementera funktioner för dynamisk minneshantering
+ *   6: placera de här i game_of_life.c
  */
-cell **allocate_field ( field *field_ptr);
-void dispose_field( field *current_field);
+cell **allocate_cells ( const int nrows, const int ncols);
+/* Krav från uppgiftsektionen för Mästarprov 9:
+ *   4: implementera funktioner för dynamisk minneshantering
+ *   6: placera de här i game_of_life.c
+ */
+void dispose_field( cell **current_cells);
 
+/* dump av skärmbild
+ */
 void dump_field( field current_field);
-int neighbours ( field current_field,
-		 const int row,
-		 const int col);
+
+/* en generation
+ */
+void one_generation( field current_field);
 
 #endif
+
 /*
  * Local Variables:
- * c-file-style: "k&r"
+ * c-file-style: "ellemtel"
  * compile-command: "make"
  * End:
  */
