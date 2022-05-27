@@ -3,7 +3,7 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-05-08 19:15:36 stefan>
+ * Date:         Time-stamp: <2022-05-22 13:40:04 stefan>
  * File:         game_of_life.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -22,34 +22,57 @@
 #include <time.h>
 
 #include "game_of_life.h"
+#include "game_of_life_file_handler.h"
 
 /* Hjälpfunktioner för att definiera vissa operationer
  */
-void dump_field( field current_field);
+void dump_field( field *current_field);
 int neighbours( field *current_field, const int row, const int col);
 
 /* Krav från uppgiftsektionen för Mästarprov 9:
- *   6: placera de här i game_of_life.c
+ *   funktioner för manuell minnesallokering
+ *     4: implementera funktioner för dynamisk minneshantering
+ *     6: placera de här i game_of_life.c
+ *
+ * allokering och avallokering av uppgifter om själva ytan (dimensioner)
  */
-cell **allocate_cells ( const int nrows,
-			const int ncols)
+field* allocate_field()
 {
-   cell **cells_ptr = malloc( sizeof(cell *) * nrows);
-   for (int i = 0; i < nrows ; i++)
+   return malloc(sizeof(field));
+}
+void dispose_field(field** current_field)
+{
+   if ( current_field != 0 &&
+	*current_field != 0)
    {
-      *(cells_ptr + i) = malloc( sizeof(cell) * ncols);
+      free(*current_field);
+      *current_field=0;
    }
-
-   return( cells_ptr);
 }
 
 /* Krav från uppgiftsektionen för Mästarprov 9:
- *   6: placera de här i game_of_life.c
+ *   allokering och avallokering av uppgifter om själva ytan (dimensioner)
+ *
+ *   använder uppgifter från current_field för att kontrollera vektorns storlek
  */
-void dispose_field( cell **current_cells)
+cell** allocate_cells(int rows, int cols)
 {
-   /*  free( current_field.cells;*/
+   cell** cells_ptr = malloc( sizeof(cell *) * rows);
+
+   for (int i = 0; i < rows ; i++)
+   {
+      cells_ptr[i] = malloc( sizeof(cell) * cols);
+   }
+   return cells_ptr;
 }
+void dispose_cells(field* current_field)
+{
+   if (current_field->cells != 0)
+      free(current_field->cells);
+
+   current_field->cells=0;
+}
+
 
 /* Krav från uppgiftsektionen för Mästarprov 9:
  *   6: flytta flertalet funktioner från mp8.c till game_of_life.c
@@ -74,13 +97,13 @@ int neighbours( field *current_field,
 /* Krav från uppgiftsektionen för Mästarprov 9:
  *   6: flytta flertalet funktioner från mp8.c till game_of_life.c
  */
-void dump_field( field current_field)
+void dump_field( field* current_field)
 {
-   for (int y = 0; y < current_field.rows ; y++)
+   for (int y = 0; y < current_field->rows ; y++)
    {
-      for (int x = 0; x < current_field.cols ; x++)
+      for (int x = 0; x < current_field->cols ; x++)
       {
-	 if ( ((cell *) current_field.cells[y])[x].current == DEAD)
+	 if ( ((cell *) current_field->cells[y])[x].current == DEAD)
 	    putchar('.');
 	 else
 	    putchar('X');
@@ -92,70 +115,81 @@ void dump_field( field current_field)
 
 /* låt en generation kvarstå, dö ut eller födas
  */
-void one_generation( field current_field)
+void one_generation( field* current_field)
 {
-   for (int y = 0; y < current_field.rows ; y++)
+   for (int y = 0; y < current_field->rows ; y++)
    {
-      for (int x = 0; x < current_field.cols ; x++)
+      for (int x = 0; x < current_field->cols ; x++)
       {
-	 int n_neighbours = neighbours( &current_field, y, x);
-	 switch( (( cell *) current_field.cells[y])[x].current)
+	 int n_neighbours = neighbours( current_field, y, x);
+	 switch( (( cell *) current_field->cells[y])[x].current)
 	 {
 	    case ALIVE:
 	       if ( n_neighbours < 2)       /* inte tillräckligt mycket stöd från grannar för att överleva */
-		  (( cell *) current_field.cells[y])[x].next = DEAD;
+		  (( cell *) current_field->cells[y])[x].next = DEAD;
 	       else if ( n_neighbours > 3 ) /* överbefolkning */
-		  (( cell *) current_field.cells[y])[x].next = DEAD;
+		  (( cell *) current_field->cells[y])[x].next = DEAD;
 	       else
-		  (( cell *) current_field.cells[y])[x].next = ALIVE;
+		  (( cell *) current_field->cells[y])[x].next = ALIVE;
 	       break;
 	    case DEAD:
 	    default:
 	       if ( n_neighbours == 3) /* tre levande grannar så en klon migrerar till cellen */
-		  (( cell *) current_field.cells[y])[x].next = ALIVE;
+		  (( cell *) current_field->cells[y])[x].next = ALIVE;
 	       else
-		  (( cell *) current_field.cells[y])[x].next = DEAD;
+		  (( cell *) current_field->cells[y])[x].next = DEAD;
 	       break;
 	 }
       }
    }
    /* låt en generation gå
     */
-   for (int y = 0; y < current_field.rows ; y++)
+   for (int y = 0; y < current_field->rows ; y++)
    {
-      for (int x = 0; x < current_field.cols ; x++)
+      for (int x = 0; x < current_field->cols ; x++)
       {
-	 switch( (( cell *) current_field.cells[y])[x].current)
-	 {
-	    case ALIVE:
-	       if ( (( cell *) current_field.cells[y])[x].next == DEAD)
-		  (( cell *) current_field.cells[y])[x].current = DEAD;
-	       break;
-	    case DEAD:
-	    default:
-	       if ( (( cell *) current_field.cells[y])[x].next == ALIVE)
-		  (( cell *) current_field.cells[y])[x].current = ALIVE;
-	 }
+	 if ( current_field->cells[y][x].next == ALIVE)
+	    current_field->cells[y][x].current = ALIVE;
+	 else
+	    current_field->cells[y][x].current = DEAD;
+
+	 /* switch( (( cell *) current_field.cells[y])[x].current) */
+	 /* { */
+	 /*    case ALIVE: */
+	 /*       if ( (( cell *) current_field.cells[y])[x].next == DEAD) */
+	 /*	  (( cell *) current_field.cells[y])[x].current = DEAD; */
+	 /*       break; */
+	 /*    case DEAD: */
+	 /*    default: */
+	 /*       if ( (( cell *) current_field.cells[y])[x].next == ALIVE) */
+	 /*	  (( cell *) current_field.cells[y])[x].current = ALIVE; */
+	 /* } */
       }
    }
 }
 
-/* Description: Initialize all the cells to dead, then asks the user
- *              about which structure to load, and finally load the
- *              structure.
- * Input:       The field array and its size.
- * Output:      The field array is updated.
+/* Description: Initialisera alla celler till dead/tom, läs in från
+ *              infil vilka som ska vara upptagna/levande
+ * Input:       pekare till en yta
+ *              pekare till FILE-struktur för infil
+ * Output:      int som markör för om inläsningen lyckades
  *
  * modifierad för att använda sig av field-strukturen
  *
  * Krav från uppgiftsektionen för Mästarprov 9:
  *   6: flytta flertalet funktioner från mp9.c till game_of_life.c
  */
-void init_field( const int rows,
-		 const int cols,
-		 cell field[rows][cols])
+int init_field(field *current_field, FILE *infil)
 {
+   if (current_field != 0 &&
+       current_field->cells != 0)
+      dispose_cells(current_field);
 
+   /* fprintf( stderr, "int init_field(field *current_field, FILE *infil)\n");*/
+   if (!load_config_from_file(current_field, infil))
+      return 0;
+   else
+      return 1;
 }
 
 /*

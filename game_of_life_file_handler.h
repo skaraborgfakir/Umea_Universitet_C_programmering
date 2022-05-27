@@ -3,7 +3,7 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-04-28 00:12:01 stefan>
+ * Date:         Time-stamp: <2022-05-19 23:03:04 stefan>
  * File:         game_of_life_file_handler.h
  * Description:  A simple implementation of Conway's Game of Life.
  *               Definitioner för I/O-funktioner
@@ -18,8 +18,8 @@
  *   3: implementera funktionen load_config_from_file
  *   3: implementera funktionen save_config_to_file
  */
-int load_config_from_file( field *the_field, FILE *fp);
-int save_config_to_file( const field the_field, FILE *fp);
+int load_config_from_file(field *the_field, FILE *fp);
+int save_config_to_file(const field the_field, FILE *fp);
 
 #endif
 

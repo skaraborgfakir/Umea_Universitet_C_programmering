@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-# Time-stamp: <2022-05-05 20:12:17 stefan>
+# Time-stamp: <2022-05-12 22:43:03 stefan>
 #
 
 INCLUDES = game_of_life.h game_of_life_file_handler.h
@@ -17,3 +17,6 @@ all: mp9
 
 mp9: $(MP9OBJS)
 	$(CC) $(CFLAGS) $(MP9OBJS) -o $@
+
+clean:
+	rm *.o

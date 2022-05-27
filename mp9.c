@@ -3,7 +3,7 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-05-10 23:48:34 stefan>
+ * Date:         Time-stamp: <2022-05-22 13:36:04 stefan>
  * File:         mp9.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -41,55 +41,70 @@ int check_prog_params(int argc, const char *argv[],
  * Krav från uppgiftsektionen för Mästarprov 9:
  *   3 använd funktionen check_prog_params
  *   6 töm mp9.c på övriga funktioner förutom main och check_prog_params
+ *
+ * analys av mp9 i peppar:
+ *   första skärmbilden man får är utan transformering, likaså är den dumpade
+ *   resultatet samma sak, alltså ska filen läses in, läget visas och direkt kunna dumpas
  */
 int main( int argc,
 	  const char *argv[])
 {
-   /* se till att argumenten blir kontrollerade och att filerna blir öppnade
-    */
-   field current_field;
+   field* current_field; /* världen */
+   FILE *infil;         /* startläge */
+   FILE *resultatsfil;  /* nuvarande läge sparas vid programavslut */
+
+   /* används för läsning från terminal */
    const int bufferdim = 10;
    char buffer[bufferdim];
 
-   FILE *infil;
-   FILE *resultatsfil;
-   int arg_status = check_prog_params( argc,
-				       argv,
-				       &infil,
-				       &resultatsfil);
-
+   /* se till att argumenten blir kontrollerade och att filerna blir öppnade
+    */
+   int arg_status = check_prog_params(argc, argv, &infil, &resultatsfil);
 
    if (!arg_status)
    {
-      /* allt ok, ladda startläge och låt generationerna komma
+      current_field = allocate_field();
+      /* allt ok, avallokera sedan tidigare inladdad status, ladda nytt startläge och låt generationerna komma
        */
-      if (!load_config_from_file( &current_field, infil))
+      if (!init_field( current_field, infil))
       {
 	 int time_to_quit = 0;
 
 	 while (!time_to_quit)
 	 {
-	    dump_field( current_field);
-	    /* låt generationerna komma */
-	    one_generation(current_field);
+	    dump_field(current_field);
 
 	    printf( "Select one of the following options:\n        (enter) Step\n        (any)   Save and exit\n");
 
 	    char *input = fgets( buffer, bufferdim-1, stdin);
-	    if ( input == 0)
+	    if (input==0)
+	    {
 	       time_to_quit = 1; /* 0 från fgets, inget att läsa - tryckte användaren på ^D ? */
+	    }
 	    else
 	    {
-	       if ( strlen( buffer) == 1 && !strcmp( "\n", buffer)) /* tom rad */
-		  time_to_quit = 0;
-	       else
+	       if (strlen(buffer) == 1)
+	       {
+		  switch( buffer[0])
+		  {
+		     case '\n':
+			time_to_quit = 0;
+			break;
+		     default:
+			time_to_quit = 1;
+		  }
+	       }
+	       else                       /* ett eller flera tecken, spelar ingen roll det är inte ett \n */
 		  time_to_quit = 1;
 	    }
+
+	    if (!time_to_quit)
+	       /* låt generationerna komma */
+	       one_generation(current_field);
 	 }
 
-	 if (time_to_quit)
-	    if (save_config_to_file(current_field, resultatsfil))
-	       exit(1);
+	 if (save_config_to_file(*current_field, resultatsfil))
+	    exit(1);
       }
       else
 	 exit(1);
@@ -127,7 +142,7 @@ int check_prog_params( int argc,
 {
    if ( argc != 3 )
    {
-      printf("Usage: %s <input configuration file> <output configuration file>\n", argv[0]);
+      fprintf( stderr, "Usage: %s <input configuration file> <output configuration file>\n", argv[0]);
       return(1);
    }
    else
@@ -141,8 +156,8 @@ int check_prog_params( int argc,
       if ( stat_in_status!=0 &&
 	   errno == ENOENT)
       {
-	    printf("Could not open the file: %s\n", argv[1]);
-	    return(1);
+	 fprintf( stderr, "Could not open the file: %s\n", argv[1]);
+	 return(1);
       }
       else
       {
@@ -151,7 +166,7 @@ int check_prog_params( int argc,
 	 *in_file_p = fopen( argv[1], "r");
 	 if (*in_file_p==0)
 	 {
-	    printf("Could not open the file: %s\n", argv[1]);
+	    fprintf( stderr, "Could not open the file: %s\n", argv[1]);
 	    return(1);
 	 }
       }
@@ -174,14 +189,14 @@ int check_prog_params( int argc,
 	    *out_file_p = fopen( argv[2], "w");
 	    if(*out_file_p==0)
 	    {
-	       printf("Could not open the file: %s\n", argv[2]);
+	       fprintf( stderr, "Could not open the file: %s\n", argv[2]);
 	       return(1);
 	    }
 	    return(0);
 	 }
 	 else
 	 {
-	    printf("Could not open the file: %s\n", argv[2]);
+	    fprintf( stderr, "Could not open the file: %s\n", argv[2]);
 	    return(1);
 	 }
       }
@@ -191,7 +206,7 @@ int check_prog_params( int argc,
 	 *out_file_p = fopen( argv[2], "w");
 	 if(*out_file_p==0)
 	 {
-	    printf("Could not open the file: %s\n", argv[2]);
+	    fprintf( stderr, "Could not open the file: %s\n", argv[2]);
 	    return(1);
 	 }
 	 return(0);

@@ -3,7 +3,7 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-05-07 23:12:37 stefan>
+ * Date:         Time-stamp: <2022-05-22 13:07:43 stefan>
  * File:         game_of_life_file_handler.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -36,23 +36,27 @@ typedef struct {
 } field;
 
 /* Krav från uppgiftsektionen för Mästarprov 9:
- *   4: implementera funktioner för dynamisk minneshantering
- *   6: placera de här i game_of_life.c
+ *   funktioner för manuell minnesallokering:
+ *     4: implementera funktioner för dynamisk minneshantering
+ *     6: placera de här i game_of_life.c
  */
-cell **allocate_cells ( const int nrows, const int ncols);
-/* Krav från uppgiftsektionen för Mästarprov 9:
- *   4: implementera funktioner för dynamisk minneshantering
- *   6: placera de här i game_of_life.c
+field* allocate_field();
+void dispose_field(field** current_field);
+cell** allocate_cells(int rows, int cols);
+void dispose_cells(field *current_field);
+
+/* uppdaterad version av init_field
+ * använder load_config_from_file från game_of_life_file_handler
  */
-void dispose_field( cell **current_cells);
+int init_field(field *current_field, FILE *infil);
 
 /* dump av skärmbild
  */
-void dump_field( field current_field);
+void dump_field(field *current_field);
 
 /* en generation
  */
-void one_generation( field current_field);
+void one_generation(field *current_field);
 
 #endif
 

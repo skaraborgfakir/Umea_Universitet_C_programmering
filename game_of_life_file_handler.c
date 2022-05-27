@@ -3,7 +3,7 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-05-08 19:17:20 stefan>
+ * Date:         Time-stamp: <2022-05-22 12:55:37 stefan>
  * File:         game_of_life_file_handler.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -48,35 +48,46 @@ int load_config_from_file(field *the_field, FILE *fp)
    {
       /* felaktig input på första raden - fick vi två tal ? - NEJ
        */
+      fprintf(stderr, "Incorrect configuration file format\n");
       fclose(fp);
       return(1);
    }
    else
    {
-      the_field -> cells = allocate_cells(the_field->rows, the_field->cols);
+      the_field->cells = allocate_cells(the_field->rows, the_field->cols);
 
       char buffer[the_field->cols + 1];
 
       for (int y = 0; y < the_field->rows; y++)
       {
 	 int res = fscanf(fp, "%s", buffer);
-	 printf( "%s\n", buffer);
 
 	 if ( res != 1 )
+	 {
+	    fprintf(stderr, "Incorrect configuration file format\n");
+	    fclose(fp);
 	    return(1);
+	 }
 
 	 for (int x = 0; x < the_field -> cols; x++)
 	 {
 	    ((cell*)the_field->cells[y])[x].current = DEAD;
 
-	    if( buffer[x] == '*')
+	    switch( buffer[x] )
 	    {
-	       ((cell*)the_field->cells[y])[x].current = ALIVE;
+	       case '*':
+		  ((cell*)the_field->cells[y])[x].current = ALIVE;
+		  break;
+	       case '0':
+		  ((cell*)the_field->cells[y])[x].current = DEAD;
+		  break;
+	       default:
+		  fprintf(stderr, "Incorrect configuration file format\n");
+		  fclose(fp);
+		  return(1);
 	    }
 	 }
       }
-
-      return( 0);
    }
 
    fclose( fp);
@@ -99,7 +110,7 @@ int load_config_from_file(field *the_field, FILE *fp)
 int save_config_to_file(const field the_field, FILE *fp)
 {
    fprintf(fp, "%d,%d\n", the_field.rows, the_field.cols);
-   for (int y=0; y< the_field.rows; y++)
+   for (int y=0; y<the_field.rows; y++)
    {
       for (int x=0; x<the_field.cols; x++)
       {
@@ -110,7 +121,7 @@ int save_config_to_file(const field the_field, FILE *fp)
 	       break;
 	    case DEAD:
 	    default:
-	       fprintf(fp, "%d", 0);
+	       fprintf(fp, "%s", "0");
 	 }
       }
       fprintf(fp, "\n");
