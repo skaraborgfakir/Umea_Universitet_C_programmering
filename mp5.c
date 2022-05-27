@@ -1,5 +1,6 @@
-/*
- * Time-stamp: <2022-04-17 15:05:39 stefan>
+/* -*-c-*-
+ *
+ * Time-stamp: <2022-05-27 17:01:22 stefan>
  *
  * Mästarprov 5
  *
