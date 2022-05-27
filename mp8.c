@@ -1,7 +1,7 @@
-/* -*-c-*-
+/* -*- mode: c -*-
  *
  * Programmering i C
- * Time-stamp: <2022-05-27 17:04:06 stefan>
+ * Time-stamp: <2022-05-27 17:09:37 stefan>
  * Spring 22
  * Mastery test 8
  *
