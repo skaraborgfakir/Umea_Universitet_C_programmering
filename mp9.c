@@ -1,10 +1,10 @@
-/* -*-c-*-
+/* -*- mode: c -*-
  *
  * Programmering i C
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-05-27 17:03:19 stefan>
+ * Date:         Time-stamp: <2022-05-27 17:08:59 stefan>
  * File:         mp9.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
