@@ -1,9 +1,10 @@
-/*
+/* -*-c-*-
+ *
  * Programmering i C
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-05-19 23:03:04 stefan>
+ * Date:         Time-stamp: <2022-05-27 17:03:10 stefan>
  * File:         game_of_life_file_handler.h
  * Description:  A simple implementation of Conway's Game of Life.
  *               Definitioner för I/O-funktioner

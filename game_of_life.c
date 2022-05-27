@@ -1,9 +1,10 @@
-/*
+/* -*-c-*-
+ *
  * Programmering i C
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-05-22 13:40:04 stefan>
+ * Date:         Time-stamp: <2022-05-27 17:02:45 stefan>
  * File:         game_of_life.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
