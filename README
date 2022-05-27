@@ -6,3 +6,4 @@ Laborationerna har grenar:
      statisk definition av vilka celler som det är liv i
   mp9 (mästarprov 9) - Conways Game of life
      utökad med funktioner för läsning och dump av cellerna till en fil
+     annan ordning i hur algoritmen körs jämfört med M8
