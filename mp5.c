@@ -1,6 +1,6 @@
-/* -*-c-*-
+/* -*- mode: c -*-
  *
- * Time-stamp: <2022-05-27 17:01:22 stefan>
+ * Time-stamp: <2022-05-27 17:07:34 stefan>
  *
  * Mästarprov 5
  *
