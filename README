@@ -3,4 +3,6 @@ Mästarprov och laborationer för en C-progammeringskurs vid Umeå universitet
 Laborationerna har grenar:
   mp5 (mästarprov)   - resehjälp för omräkning av sakers priser till SEK
   mp8 (mästarprov 8) - Conways Game of life
+     statisk definition av vilka celler som det är liv i
   mp9 (mästarprov 9) - Conways Game of life
+     utökad med funktioner för läsning och dump av cellerna till en fil
