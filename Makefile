@@ -1,5 +1,6 @@
-#!/usr/bin/make -f
-# Time-stamp: <2022-05-12 22:43:03 stefan>
+# -*- mode: makefile -*-
+#
+# Time-stamp: <2022-05-27 17:16:10 stefan>
 #
 
 INCLUDES = game_of_life.h game_of_life_file_handler.h
