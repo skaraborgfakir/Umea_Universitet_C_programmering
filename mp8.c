@@ -14,6 +14,13 @@
  *               to step or exit.
  * Output:       Prints the game field in each step.
  * Limitations:  No validation of input.
+ *
+ * svensk beskrivning:
+ *               Conways livsspel är ett klassiskt exempel på cellautomata
+ *               som kan beskrivas i termer av stöd/support eller överbefolkning
+ *
+ * I koden och kommentarer använder jag svenska därför att det är mitt starkaste spräk
+ * för förståelse och reflektion över något.
  */
 
 #include <stdio.h>
@@ -67,17 +74,17 @@ int main( void)
     * exemplet använder 20x20 så låt oss göra så
     */
    int avsluta = 0;
-   cell cellerna[nrows][ncols];
+   cell cellerna[antal_rader][antal_kolumner];
    const int bufferdim = 10;
    char buffer[bufferdim];
 
-   init_field( nrows, ncols, cellerna);
+   init_field( antal_rader, antal_kolumner, cellerna);
 
    while(!avsluta)
    {
-      cellutskrift( nrows, ncols, cellerna);             /* utskrift av världen med cellernas invånare */
-      beräkna_framtida_status( nrows, ncols, cellerna);  /* bestämm vilka celler som i nästa generation fortfarande ska leva, dö eller uppstå */
-      ny_generation( nrows, ncols, cellerna);            /* låt den nya generationen komma */
+      cellutskrift( antal_rader, antal_kolumner, cellerna);             /* utskrift av världen med cellernas invånare */
+      beräkna_framtida_status( antal_rader, antal_kolumner, cellerna);  /* bestämm vilka celler som i nästa generation fortfarande ska leva, dö eller uppstå */
+      ny_generation( antal_rader, antal_kolumner, cellerna);            /* låt den nya generationen komma */
 
       printf( "Select one of the following options:\n(enter) Step\n(any)   Exit\n");
 
@@ -193,6 +200,9 @@ void load_glider(const int rows, const int cols,
  * Output:      The field array is updated.
  *
  * given av uppgiften - ändra inte
+ *
+ * tre horisontellt placerade lampor lyser vs
+ * att den mittre och en rakt ovanför och en rakt nedanför lyser
  */
 
 void load_semaphore(const int rows, const int cols,
