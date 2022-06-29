@@ -31,23 +31,25 @@ typedef struct {
    char current;
    char next;
 } cell;
-/* exemplet i peppar använder
- *
- * exemplet använder 20x20 så låt oss göra så
+/* exemplet i peppar använder 20x20 så låt oss göra så
  */
 const int ncols = 20;
 const int nrows = 20;
 
 /* Declaration of functions */
-void init_field    ( const int rows, const int cols, cell field[rows][cols]);
-void load_glider   ( const int rows, const int cols, cell field[rows][cols]);
-void load_semaphore( const int rows, const int cols, cell field[rows][cols]);
-void load_random   ( const int rows, const int cols, cell field[rows][cols]);
-void load_custom   ( const int rows, const int cols, cell field[rows][cols]);
-void cellutskrift  ( const int nrows, const int ncols, cell field[nrows][ncols]);
-void beräkna_framtida_status( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
-int antalgrannar   ( const int nrows, const int ncols, cell atlas[nrows][ncols], const int row, const int col);
-void ny_generation ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+void init_field                     ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+void load_glider                    ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+void load_semaphore                 ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+void load_random                    ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+void load_custom                    ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+void cellutskrift                   ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+int  antalgrannar                   ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner], const int rad, const int kolumn);
+void beräkna_nästa_generationsskifte( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+void generationsskifte              ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+/*
+ * påskägg
+ */
+void load_exempel_sidan_1           ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
 
 /* Description: Start and run games, interact with the user.
  * Input:       About what initial structure and whether to step or
@@ -269,11 +271,11 @@ void beräkna_framtida_status( const int antal_rader,
     *
     * se: https://conwaylife.com/wiki/Conway%27s_Game_of_Life
     */
-   for ( int rad = 0 ; rad < nrows ; rad++)
+   for ( int rad = 0 ; rad < antal_rader ; rad++)
    {
-      for ( int kolumn = 0 ; kolumn < ncols ; kolumn++)
+      for ( int kolumn = 0 ; kolumn < antal_kolumner ; kolumn++)
       {
-	 int grannar = antalgrannar( nrows, ncols, cellerna, rad, kolumn);  /* antal levande/bebodda celler runt en en viss cell */
+	 int grannar = antalgrannar( antal_rader, antal_kolumner, cellerna, rad, kolumn);  /* antal levande/bebodda celler runt en en viss cell */
 
 	 switch ( cellerna[rad][kolumn].current )
 	 {
@@ -328,7 +330,6 @@ int antalgrannar( const int antal_rader, const int antal_kolumner, cell cellerna
    return antalgrannar;  /* intervallet 0..8 */
 }
 
-
 /* Description: låt några dö och låt en generation födas
  *
  * parametrar: antal_rader och antal_kolumner, dimensioner för världen
@@ -336,7 +337,9 @@ int antalgrannar( const int antal_rader, const int antal_kolumner, cell cellerna
  * returnerar inget - resultatet hanteras mha sidoeffekter
  */
 
-void ny_generation( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner])
+void generationsskifte( const int antal_rader,
+			const int antal_kolumner,
+			cell cellerna[antal_rader][antal_kolumner])
 {
    /* låt en generation gå/leva-och-dö
     */
@@ -347,14 +350,12 @@ void ny_generation( const int antal_rader, const int antal_kolumner, cell celler
 	 switch ( cellerna[rad][kolumn].current )          /* utgå från nuvarande status */
 	 {
 	    case ALIVE:                                    /* levande cell */
-	       if ( cellerna[rad][kolumn].next == ALIVE )  /* den fortsätter leva/vara bebodd ännu en generation */
-		  cellerna[rad][kolumn].current = ALIVE;
-	       else
-		  cellerna[rad][kolumn].current = DEAD;    /* dör, pga överbefolkning eller otillräckligt stöd från intilligande */
+	       if ( cellerna[rad][kolumn].next == DEAD )   /* dör, pga överbefolkning eller otillräckligt stöd från intilliggande ? */
+		  cellerna[rad][kolumn].current = DEAD;
 	       break;
 
 	    case DEAD:                                     /* tom/död cell */
-	       if ( cellerna[rad][kolumn].next == ALIVE )  /* ny födds */
+	       if ( cellerna[rad][kolumn].next == ALIVE )  /* cellen får en inneboende/klon från intilliggande */
 		  cellerna[rad][kolumn].current = ALIVE;
 	 }
       }
