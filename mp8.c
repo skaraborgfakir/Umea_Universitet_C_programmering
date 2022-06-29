@@ -324,7 +324,7 @@ void load_custom(const int rows, const int cols,
 
 /*
  * Local Variables:
- * c-file-style: "k&r"
+ * c-file-style: "ellemtel"
  * compile-command: "make"
  * End:
  */
