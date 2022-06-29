@@ -1,7 +1,7 @@
 /* -*- mode: c -*-
  *
  * Programmering i C
- * Time-stamp: <2022-05-27 17:09:37 stefan>
+ * Time-stamp: <2022-06-29 01:37:04 stefan>
  * Spring 22
  * Mastery test 8
  *
@@ -58,60 +58,6 @@ void ny_generation ( const int antal_rader, const int antal_kolumner, cell celle
 
 int main( void)
 {
-	  /* iterering igenom cellerna för att hitta nödvändiga förändringar
-	   *
-	   * se: https://conwaylife.com/wiki/Conway%27s_Game_of_Life
-	   */
-	  for ( int rad = 0 ; rad < nrows ; rad++)
-	  {
-	       for ( int kolumn = 0 ; kolumn < ncols ; kolumn++)
-	       {
-		    int grannar = antalgrannar( nrows, ncols, cellerna, rad, kolumn);
-
-		    switch ( cellerna[rad][kolumn].current )
-		    {
-		    case ALIVE:
-			 if ( grannar < 2 )      /* inte tillräckligt mycket stöd från grannar för att överleva */
-			      cellerna[rad][kolumn].next = DEAD;
-			 else if ( grannar > 3 ) /* överbefolkning */
-			      cellerna[rad][kolumn].next = DEAD;
-			 else                    /* implicit två eller tre levande grannar - överlever */
-			      cellerna[rad][kolumn].next = ALIVE;
-			 break;
-
-		    case DEAD:
-		    default:
-			 if ( grannar == 3) /* tre levande grannar så en klon migrerar till cellen */
-			      cellerna[rad][kolumn].next = ALIVE;
-			 else
-			      cellerna[rad][kolumn].next = DEAD;
-		    }
-	       }
-	  }
-
-	  /*
-	   * låt en generation gå
-	   */
-	  for ( int rad = 0 ; rad < nrows ; rad++)
-	  {
-	       for ( int kolumn = 0 ; kolumn < ncols ; kolumn++)
-	       {
-		    switch ( cellerna[rad][kolumn].current )
-		    {
-		    case ALIVE:
-			 if ( cellerna[rad][kolumn].next == ALIVE )
-			      cellerna[rad][kolumn].current = ALIVE;
-			 else
-			      cellerna[rad][kolumn].current = DEAD;
-			 break;
-
-		    case DEAD:
-			 if ( cellerna[rad][kolumn].next == ALIVE )
-			      cellerna[rad][kolumn].current = ALIVE;
-		    }
-	       }
-	  }
-
    /*
     * krav : fixa en värld (matris av celler) med en visst antal positioner
     * exemplet i peppar använder
@@ -123,36 +69,13 @@ int main( void)
    const int bufferdim = 10;
    char buffer[bufferdim];
 
-     return 0;
-}
    init_field( nrows, ncols, cellerna);
 
-int antalgrannar( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner],
-		  const int cellens_rad, const int cellens_kolumn)
-{
-     /*
-      * algoritm:
-      *   påbörja sökning i cell snett uppåt vänster från aktuell cell
-      *   därefter sök av radvis, börja i vänster
-      *   rad två, den mittersta är aktuell cell
-      */
-     int antalgrannar = 0;
-
-     for ( int rad = cellens_rad-1 ; rad <= cellens_rad + 1 ; rad++) /* sök igenom 3 rader */
-     {
-	  for ( int kolumn = cellens_kolumn-1 ; kolumn <= cellens_kolumn + 1 ; kolumn++) /* sök igenom 3 kolumner */
-	       if ( rad >= 0 && kolumn >= 0                            &&  /* kontroll att sökningen är i cellerna */
-		    rad < antal_rader && kolumn < antal_kolumner       &&  /* inte nedanför eller för långt till höger */
-		    !( rad == cellens_rad && kolumn == cellens_kolumn) &&  /* se till att inte få med cellen självt !!! */
-		    cellerna[rad][kolumn].current == ALIVE)                /* lever grannen ? */
-		    antalgrannar ++;
-     }
-
-     return antalgrannar;
-}
    while(!avsluta)
    {
       cellutskrift( nrows, ncols, cellerna);             /* utskrift av världen med cellernas invånare */
+      beräkna_framtida_status( nrows, ncols, cellerna);  /* bestämm vilka celler som i nästa generation fortfarande ska leva, dö eller uppstå */
+      ny_generation( nrows, ncols, cellerna);            /* låt den nya generationen komma */
 
       printf( "Select one of the following options:\n(enter) Step\n(any)   Exit\n");
 
@@ -171,16 +94,23 @@ int antalgrannar( const int antal_rader, const int antal_kolumner, cell cellerna
 
    return 0;
 }
+
+/* description: skriv ut världens invånare och de celler som för stunden är tomma
+ *
+ * parametrar: antal_rader och antal_kolumner, dimensioner för världen
+ *             cellerna världen själv, en matris med två olika uppgifter för varje cell
+ *
+ * returnerar inte något, allt hanteras mha sidoeffekter
  */
 void cellutskrift( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner] )
 {
-     for (int rad = 0 ; rad < antal_rader ; rad++) {
-	  for (int kolumn = 0 ; kolumn < antal_kolumner ; kolumn++) {
-	       putc( cellerna[rad][kolumn].current, stdout);
-	       printf( " ");
-	  }
-	  putc( '\n', stdout);
-     }
+   for ( int rad = 0 ; rad < antal_rader ; rad++) {
+      for ( int kolumn = 0 ; kolumn < antal_kolumner ; kolumn++) {
+	 putc( cellerna[rad][kolumn].current, stdout);
+	 printf( " ");
+      }
+      putc( '\n', stdout);
+   }
 }
 
 /* Description: Initialize all the cells to dead, then asks the user
@@ -321,6 +251,114 @@ void load_custom(const int rows, const int cols,
       field[r][c].current = ALIVE;
    }
    while ( getchar() != '\n');
+}
+
+/* Description: sök igenom cellerna i ytan och tag beslut på vilka celler som
+ *              ska fortsätta vara bebodd, bli tom (död) eller fortsätta antingen som tom
+ *              eller ska få en ny inneboende
+ * Input:       antal_rader och antal_kolumner: världens storlek
+ *              cellerna: själva världen med de olika cellerna
+ * Output:      ingen, förändringar görs med sidoeffekter, för varje cell finns det ett fält där framtida status lagras
+ */
+
+void beräkna_framtida_status( const int antal_rader,
+			      const int antal_kolumner,
+			      cell cellerna[antal_rader][antal_kolumner])
+{
+   /* iterering igenom cellerna för att hitta nödvändiga förändringar
+    *
+    * se: https://conwaylife.com/wiki/Conway%27s_Game_of_Life
+    */
+   for ( int rad = 0 ; rad < nrows ; rad++)
+   {
+      for ( int kolumn = 0 ; kolumn < ncols ; kolumn++)
+      {
+	 int grannar = antalgrannar( nrows, ncols, cellerna, rad, kolumn);  /* antal levande/bebodda celler runt en en viss cell */
+
+	 switch ( cellerna[rad][kolumn].current )
+	 {
+	    case ALIVE:
+	       if ( grannar < 2 )      /* inte tillräckligt mycket stöd från grannar för att överleva */
+		  cellerna[rad][kolumn].next = DEAD;
+	       else if ( grannar > 3 ) /* överbefolkning */
+		  cellerna[rad][kolumn].next = DEAD;
+	       else                    /* implicit två eller tre levande grannar - överlever */
+		  cellerna[rad][kolumn].next = ALIVE;
+	       break;
+
+	    case DEAD:
+	    default:
+	       if ( grannar == 3) /* tre levande grannar så en klon migrerar till cellen */
+		  cellerna[rad][kolumn].next = ALIVE;
+	       else
+		  cellerna[rad][kolumn].next = DEAD;
+	 }
+      }
+   }
+}
+
+/* Description: antalgrannar: beräknar antal levande celler runt en specifik cell
+ *
+ * parametrar: antal_rader och antal_kolumner, dimensioner för världen
+ *             cellerna världen själv, en matris med två olika uppgifter för varje cell
+ *             cellens_rad och cellens_kolumn: för vilken cell ska antal levande grannar beräknas
+ * returnerar: antal levande grannar/bebodda celler runt en specifik ( intervall 0..8 )
+ */
+
+int antalgrannar( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner],
+		  const int cellens_rad, const int cellens_kolumn)
+{
+   /* algoritm:
+    *   påbörja sökning i cell snett uppåt vänster från aktuell cell
+    *   därefter sök av radvis, börja i vänster
+    *   rad två, den mittersta är aktuell cell
+    */
+   int antalgrannar = 0;
+
+   for ( int rad = cellens_rad-1 ; rad <= cellens_rad + 1 ; rad++) /* sök igenom 3 rader */
+   {
+      for ( int kolumn = cellens_kolumn-1 ; kolumn <= cellens_kolumn + 1 ; kolumn++) /* sök igenom 3 kolumner */
+	 if ( rad >= 0 && kolumn >= 0                            &&  /* kontroll att sökningen är i cellerna */
+	      rad < antal_rader && kolumn < antal_kolumner       &&  /* inte nedanför eller för långt till höger */
+	      !( rad == cellens_rad && kolumn == cellens_kolumn) &&  /* se till att inte få med cellen självt !!! */
+	      cellerna[rad][kolumn].current == ALIVE)                /* lever grannen ? */
+	    antalgrannar ++;
+   }
+
+   return antalgrannar;  /* intervallet 0..8 */
+}
+
+
+/* Description: låt några dö och låt en generation födas
+ *
+ * parametrar: antal_rader och antal_kolumner, dimensioner för världen
+ *             cellerna världen själv, en matris med två olika uppgifter för varje cell
+ * returnerar inget - resultatet hanteras mha sidoeffekter
+ */
+
+void ny_generation( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner])
+{
+   /* låt en generation gå/leva-och-dö
+    */
+   for ( int rad = 0 ; rad < antal_rader ; rad++)
+   {
+      for ( int kolumn = 0 ; kolumn < antal_kolumner ; kolumn++)
+      {
+	 switch ( cellerna[rad][kolumn].current )          /* utgå från nuvarande status */
+	 {
+	    case ALIVE:                                    /* levande cell */
+	       if ( cellerna[rad][kolumn].next == ALIVE )  /* den fortsätter leva/vara bebodd ännu en generation */
+		  cellerna[rad][kolumn].current = ALIVE;
+	       else
+		  cellerna[rad][kolumn].current = DEAD;    /* dör, pga överbefolkning eller otillräckligt stöd från intilligande */
+	       break;
+
+	    case DEAD:                                     /* tom/död cell */
+	       if ( cellerna[rad][kolumn].next == ALIVE )  /* ny födds */
+		  cellerna[rad][kolumn].current = ALIVE;
+	 }
+      }
+   }
 }
 
 /*
