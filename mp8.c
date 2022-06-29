@@ -45,7 +45,9 @@ void load_semaphore( const int rows, const int cols, cell field[rows][cols]);
 void load_random   ( const int rows, const int cols, cell field[rows][cols]);
 void load_custom   ( const int rows, const int cols, cell field[rows][cols]);
 void cellutskrift  ( const int nrows, const int ncols, cell field[nrows][ncols]);
+void beräkna_framtida_status( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
 int antalgrannar   ( const int nrows, const int ncols, cell atlas[nrows][ncols], const int row, const int col);
+void ny_generation ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
 
 /* Description: Start and run games, interact with the user.
  * Input:       About what initial structure and whether to step or
@@ -56,10 +58,6 @@ int antalgrannar   ( const int nrows, const int ncols, cell atlas[nrows][ncols],
 
 int main( void)
 {
-     while(!avsluta)
-     {
-	  cellutskrift( nrows, ncols, cellerna);
-
 	  /* iterering igenom cellerna för att hitta nödvändiga förändringar
 	   *
 	   * se: https://conwaylife.com/wiki/Conway%27s_Game_of_Life
@@ -152,9 +150,12 @@ int antalgrannar( const int antal_rader, const int antal_kolumner, cell cellerna
 
      return antalgrannar;
 }
+   while(!avsluta)
+   {
+      cellutskrift( nrows, ncols, cellerna);             /* utskrift av världen med cellernas invånare */
 
+      printf( "Select one of the following options:\n(enter) Step\n(any)   Exit\n");
 
-/*
       char *input = fgets( buffer, bufferdim-1, stdin);
 
       if ( input == 0)
