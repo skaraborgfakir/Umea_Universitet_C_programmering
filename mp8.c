@@ -1,7 +1,7 @@
 /* -*- mode: c -*-
  *
  * Programmering i C
- * Time-stamp: <2022-06-29 01:37:04 stefan>
+ * Time-stamp: <2022-06-29 15:40:23 stefan>
  * Spring 22
  * Mastery test 8
  *
@@ -147,6 +147,9 @@ void init_field( const int rows, const int cols,
    }
 
    switch (ch) {
+      case '1':
+	 load_exempel_sidan_1(rows, cols, field);
+	 break;
       case 'g':
       case 'G':
 	 load_glider(rows, cols, field);
@@ -198,6 +201,26 @@ void load_semaphore(const int rows, const int cols,
    field[8][1].current = ALIVE;
    field[8][2].current = ALIVE;
    field[8][3].current = ALIVE;
+}
+
+
+/* Description: exemplet från specifikationens sida 1
+ * Input:       cellerna med uppgifter om dess geometri (bredd och höjd)
+ * Output:      vilka celler som är bebodda
+ *
+ * sex st celler i kryssmönster
+ */
+
+void load_exempel_sidan_1(const int antal_rader,
+			  const int antal_kolumner,
+			  cell      cellerna[antal_rader][antal_kolumner])
+{
+   cellerna[3][3].current = ALIVE;
+   cellerna[5][3].current = ALIVE;
+   cellerna[4][4].current = ALIVE;
+   cellerna[4][5].current = ALIVE;
+   cellerna[3][6].current = ALIVE;
+   cellerna[5][6].current = ALIVE;
 }
 
 
