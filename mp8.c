@@ -1,7 +1,7 @@
 /* -*- mode: c -*-
  *
  * Programmering i C
- * Time-stamp: <2022-06-29 15:40:23 stefan>
+ * Time-stamp: <2022-07-05 11:25:05 stefan>
  * Spring 22
  * Mastery test 8
  *
@@ -17,10 +17,12 @@
  *
  * svensk beskrivning:
  *               Conways livsspel är ett klassiskt exempel på cellautomata
- *               som kan beskrivas i termer av stöd/support eller överbefolkning
+ *               som kan visualisera termerna stöd/support och överbefolkning
  *
  * I koden och kommentarer använder jag svenska därför att det är mitt starkaste spräk
  * för förståelse och reflektion över något.
+ *
+ * Jag refererar till de olika skall i specifikationen för att enklare kontrollera att de möts
  */
 
 #include <stdio.h>
@@ -28,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <assert.h>
 
 /* Constants, representation of states */
 #define ALIVE 'X'
@@ -38,25 +41,28 @@ typedef struct {
    char current;
    char next;
 } cell;
+
 /* exemplet i peppar använder 20x20 så låt oss göra så
  */
-const int ncols = 20;
-const int nrows = 20;
+const int antal_kolumner = 20;
+const int antal_rader = 20;
 
-/* Declaration of functions */
-void init_field                     ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
-void load_glider                    ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
-void load_semaphore                 ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
-void load_random                    ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
-void load_custom                    ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
-void cellutskrift                   ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
-int  antalgrannar                   ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner], const int rad, const int kolumn);
-void beräkna_nästa_generationsskifte( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
-void generationsskifte              ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+/* Declaration of functions
+ * paramtrarnas namn i en deklaration i C, måste inte vara exakt lika hur själva definitionen ser ut
+  */
+void init_field                 ( const int rows, const int cols, cell field[rows][cols]);
+void load_glider                ( const int rows, const int cols, cell field[rows][cols]);
+void load_semaphore             ( const int rows, const int cols, cell field[rows][cols]);
+void load_random                ( const int rows, const int cols, cell field[rows][cols]);
+void load_custom                ( const int rows, const int cols, cell field[rows][cols]);
+void cellutskrift               ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+int  antalgrannar               ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner], const int rad, const int kolumn);
+void kalkylera_generationsskifte( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+void generationsskifte          ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
 /*
  * påskägg
  */
-void load_exempel_sidan_1           ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+void load_exempel_sidan_1( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
 
 /* Description: Start and run games, interact with the user.
  * Input:       About what initial structure and whether to step or
@@ -64,7 +70,6 @@ void load_exempel_sidan_1           ( const int antal_rader, const int antal_kol
  * Output:      Prints information to the user, and the game field in
  *              each step.
  */
-
 int main( void)
 {
    /*
@@ -82,23 +87,22 @@ int main( void)
 
    while(!avsluta)
    {
-      cellutskrift( antal_rader, antal_kolumner, cellerna);             /* utskrift av världen med cellernas invånare */
-      beräkna_framtida_status( antal_rader, antal_kolumner, cellerna);  /* bestämm vilka celler som i nästa generation fortfarande ska leva, dö eller uppstå */
-      ny_generation( antal_rader, antal_kolumner, cellerna);            /* låt den nya generationen komma */
+      cellutskrift( antal_rader, antal_kolumner, cellerna);                 /* utskrift av världen med cellernas invånare */
+      kalkylera_generationsskifte( antal_rader, antal_kolumner, cellerna);  /* bestämm vilka celler som i nästa generation fortfarande ska leva, dö eller uppstå */
+      generationsskifte( antal_rader, antal_kolumner, cellerna);            /* låt den nya generationen komma */
 
       printf( "Select one of the following options:\n(enter) Step\n(any)   Exit\n");
 
       char *input = fgets( buffer, bufferdim-1, stdin);
 
-      if ( input == 0)
-	 avsluta = 1; /* 0 från fgets, inget att läsa - tryckte användaren på ^D ? */
-      else
-      {
-	 if ( strlen( buffer) == 1 && !strcmp( "\n", buffer)) /* tom rad */
-	    avsluta = 0;
-	 else
-	    avsluta = 1;
-      }
+      /* den här gillar jag inte riktigt, det är för mycket som blir implicit */
+      /* om input fortfarande är lika med buffer så kan längden vara 0 ? */
+      if ( input == 0 ||            /* 0 från fgets, inget att läsa - tryckte användaren på ^D ? */
+				    /* det här skiljer sig från provprogrammet i peppar, pröva ^D där ! */
+	   strlen( buffer ) == 0 || /* helt tom rad ? om raden är tom men input är skilt från 0, hur blir det här sant ?*/
+	   strcmp( "\n", buffer)    /* det finns en rad, innehåller den enbart ett ensamt radbrytningstecken eller inte ? */
+	 )
+	 avsluta = 1;
    }
 
    return 0;
@@ -106,17 +110,17 @@ int main( void)
 
 /* description: skriv ut världens invånare och de celler som för stunden är tomma
  *
- * parametrar: antal_rader och antal_kolumner, dimensioner för världen
- *             cellerna världen själv, en matris med två olika uppgifter för varje cell
+ * parametrar: antal_rader och antal_kolumner: dimensioner för världen
+ *             cellerna : världen själv, en matris med två olika uppgifter för varje cell
  *
- * returnerar inte något, allt hanteras mha sidoeffekter
+ * returnerar inte något, allt hanteras mha sidoeffekter via pekaren in i ytan (cell)
  */
 void cellutskrift( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner] )
 {
    for ( int rad = 0 ; rad < antal_rader ; rad++) {
       for ( int kolumn = 0 ; kolumn < antal_kolumner ; kolumn++) {
 	 putc( cellerna[rad][kolumn].current, stdout);
-	 printf( " ");
+	 putc( ' ', stdout);
       }
       putc( '\n', stdout);
    }
@@ -128,13 +132,14 @@ void cellutskrift( const int antal_rader, const int antal_kolumner, cell cellern
  * Input:       The field array and its size.
  * Output:      The field array is updated.
  *
+ * returnerar inte något, allt hanteras mha sidoeffekter via pekaren in i ytan (cell)
+ *
  * given av uppgiften - ändra inte
  */
-
 void init_field( const int rows, const int cols,
 		 cell field[rows][cols])
 {
-   /*
+   /* sätt alla celler som tomma
     */
    for (int r = 0 ; r < rows ; r++) {
       for (int c = 0 ; c < cols ; c++) {
@@ -172,7 +177,7 @@ void init_field( const int rows, const int cols,
       case 'c':
       case 'C':
       default:
-	 load_custom(rows, cols, field);
+	 load_custom(rows, cols,  field);
    }
 }
 
@@ -181,11 +186,13 @@ void init_field( const int rows, const int cols,
  * Input:       The field array and its size.
  * Output:      The field array is updated.
  *
+ *              Koden använder sidoeffekter !
+ *
  * given av uppgiften - ändra inte
+ * glider diagonalt från höger mot motstående hörn
  */
-
-void load_glider(const int rows, const int cols,
-		 cell field[rows][cols])
+void load_glider( const int rows, const int cols,
+		  cell field[rows][cols])
 {
    field[0][1].current = ALIVE;
    field[1][2].current = ALIVE;
@@ -203,10 +210,11 @@ void load_glider(const int rows, const int cols,
  *
  * tre horisontellt placerade lampor lyser vs
  * att den mittre och en rakt ovanför och en rakt nedanför lyser
+ *
+ * en evighetsautomata - växlar kontinuerligt mellan två konfigurationer
  */
-
-void load_semaphore(const int rows, const int cols,
-		    cell field[rows][cols])
+void load_semaphore( const int rows, const int cols,
+		     cell field[rows][cols])
 {
    field[8][1].current = ALIVE;
    field[8][2].current = ALIVE;
@@ -218,19 +226,22 @@ void load_semaphore(const int rows, const int cols,
  * Input:       cellerna med uppgifter om dess geometri (bredd och höjd)
  * Output:      vilka celler som är bebodda
  *
- * sex st celler i kryssmönster
+ *              Koden använder sidoeffekter !
+ *
+ * sex st celler i ett kryssmönster - ingen kvar efter den 15:e generationen
+ *
  */
 
-void load_exempel_sidan_1(const int antal_rader,
-			  const int antal_kolumner,
-			  cell      cellerna[antal_rader][antal_kolumner])
+void load_exempel_sidan_1( const int antal_rader,
+			   const int antal_kolumner,
+			   cell      cellerna[antal_rader][antal_kolumner])
 {
-   cellerna[3][3].current = ALIVE;
-   cellerna[5][3].current = ALIVE;
-   cellerna[4][4].current = ALIVE;
-   cellerna[4][5].current = ALIVE;
-   cellerna[3][6].current = ALIVE;
+   cellerna[5][4].current = ALIVE;
    cellerna[5][6].current = ALIVE;
+   cellerna[6][5].current = ALIVE;
+   cellerna[7][5].current = ALIVE;
+   cellerna[8][4].current = ALIVE;
+   cellerna[8][6].current = ALIVE;
 }
 
 
@@ -241,10 +252,10 @@ void load_exempel_sidan_1(const int antal_rader,
  * Output:      The field array is updated. There is a 50 % chance
  *              that a cell is alive.
  *
+ *              Koden använder sidoeffekter !
  */
-
-void load_random(const int rows, const int cols,
-		 cell field[rows][cols])
+void load_random( const int rows, const int cols,
+		  cell field[rows][cols])
 {
    /*
     * slumptalet behöver ha en seed - klassisk, använd klockan
@@ -256,16 +267,11 @@ void load_random(const int rows, const int cols,
    {
       for (int y = 0; y < rows; y++)
       {
-	 int slump = rand();
-
-	 if ( slump > RAND_MAX/2 )  /* hälften av slumptalen ska ge en bebodd cell */
-	    field[y][x].current = ALIVE;
-	 else
-	    field[y][x].current = DEAD;
+	 if ( rand() > RAND_MAX/2 )       /* hälften av slumptalen ska ge en bebodd cell (lika stor chans att slumptalet är högt eller lågt) */
+	    field[y][x].current = ALIVE;  /* skulle ha kunnat kolla om slumptalet är jämnt, samma fördelning (förhoppningsvis.) */
       }
    }
 }
-
 
 /* Description: Lets the user specify a structure that then
  *              is inserted into the field.
@@ -274,9 +280,8 @@ void load_random(const int rows, const int cols,
  *
  * given av uppgiften - ändra inte
  */
-
-void load_custom(const int rows, const int cols,
-		 cell field[rows][cols])
+void load_custom( const int rows, const int cols,
+		  cell field[rows][cols])
 {
    printf( "Give custom format string: ");
    do
@@ -294,11 +299,11 @@ void load_custom(const int rows, const int cols,
  * Input:       antal_rader och antal_kolumner: världens storlek
  *              cellerna: själva världen med de olika cellerna
  * Output:      ingen, förändringar görs med sidoeffekter, för varje cell finns det ett fält där framtida status lagras
+ *              framtida status används i generationsskifte()
  */
-
-void beräkna_framtida_status( const int antal_rader,
-			      const int antal_kolumner,
-			      cell cellerna[antal_rader][antal_kolumner])
+void kalkylera_generationsskifte( const int antal_rader,
+				  const int antal_kolumner,
+				  cell cellerna[antal_rader][antal_kolumner])
 {
    /* iterering igenom cellerna för att hitta nödvändiga förändringar
     *
@@ -313,12 +318,19 @@ void beräkna_framtida_status( const int antal_rader,
 	 switch ( cellerna[rad][kolumn].current )
 	 {
 	    case ALIVE:
-	       if ( grannar < 2 )      /* inte tillräckligt mycket stöd från grannar för att överleva */
-		  cellerna[rad][kolumn].next = DEAD;
-	       else if ( grannar > 3 ) /* överbefolkning */
-		  cellerna[rad][kolumn].next = DEAD;
-	       else                    /* implicit två eller tre levande grannar - överlever */
-		  cellerna[rad][kolumn].next = ALIVE;
+	       switch (grannar)
+	       {
+		  case 0:                                /* inte tillräckligt mycket stöd från grannar för att överleva */
+		  case 1:
+		     cellerna[rad][kolumn].next = DEAD;
+		     break;
+		  case 2:                                /* implicit två eller tre levande grannar - överlever */
+		  case 3:
+		     cellerna[rad][kolumn].next = ALIVE;
+		     break;
+		  default:                               /* mer än 3 grannar - svält och överbefolkning ! */
+		     cellerna[rad][kolumn].next = DEAD;
+	       }
 	       break;
 
 	    case DEAD:
@@ -332,14 +344,13 @@ void beräkna_framtida_status( const int antal_rader,
    }
 }
 
-/* Description: antalgrannar: beräknar antal levande celler runt en specifik cell
+/* beskrivning: antalgrannar: beräknar antal levande celler runt en specifik cell
  *
  * parametrar: antal_rader och antal_kolumner, dimensioner för världen
  *             cellerna världen själv, en matris med två olika uppgifter för varje cell
  *             cellens_rad och cellens_kolumn: för vilken cell ska antal levande grannar beräknas
  * returnerar: antal levande grannar/bebodda celler runt en specifik ( intervall 0..8 )
  */
-
 int antalgrannar( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner],
 		  const int cellens_rad, const int cellens_kolumn)
 {
@@ -360,16 +371,17 @@ int antalgrannar( const int antal_rader, const int antal_kolumner, cell cellerna
 	    antalgrannar ++;
    }
 
+   assert( antalgrannar >= 0 && antalgrannar < 9);
+
    return antalgrannar;  /* intervallet 0..8 */
 }
 
-/* Description: låt några dö och låt en generation födas
- *
+/* beskrivning: låt några försvinna och låt en ny generation komma
  * parametrar: antal_rader och antal_kolumner, dimensioner för världen
  *             cellerna världen själv, en matris med två olika uppgifter för varje cell
  * returnerar inget - resultatet hanteras mha sidoeffekter
+ *            fält i matrisen cellerna i main() förändras via en pekare
  */
-
 void generationsskifte( const int antal_rader,
 			const int antal_kolumner,
 			cell cellerna[antal_rader][antal_kolumner])
