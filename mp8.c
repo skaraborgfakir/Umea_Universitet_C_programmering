@@ -1,7 +1,7 @@
 /* -*- mode: c -*-
  *
  * Programmering i C
- * Time-stamp: <2022-07-05 11:25:05 stefan>
+ * Time-stamp: <2022-07-27 19:27:43 stefan>
  * Spring 22
  * Mastery test 8
  *
@@ -25,8 +25,8 @@
  * Jag refererar till de olika skall i specifikationen för att enklare kontrollera att de möts
  */
 
-#include <stdio.h>
 #define __USE_XOPEN
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -36,7 +36,9 @@
 #define ALIVE 'X'
 #define DEAD '.'
 
-/* Declaration of data structure */
+/* Declaration of data structure
+ * Är en viss cell bebodd/levande eller tom ?
+ */
 typedef struct {
    char current;
    char next;
@@ -47,8 +49,9 @@ typedef struct {
 const int antal_kolumner = 20;
 const int antal_rader = 20;
 
-/* Declaration of functions
- * paramtrarnas namn i en deklaration i C, måste inte vara exakt lika hur själva definitionen ser ut
+/* funktiondeklarationer
+ * parametrarnas namn i en deklaration i C måste inte vara exakt lika med hur själva definitionen ser ut
+ * antal parametrar, deras typ och deras ordning ska överensstämma
   */
 void init_field                 ( const int rows, const int cols, cell field[rows][cols]);
 void load_glider                ( const int rows, const int cols, cell field[rows][cols]);
@@ -59,6 +62,7 @@ void cellutskrift               ( const int antal_rader, const int antal_kolumne
 int  antalgrannar               ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner], const int rad, const int kolumn);
 void kalkylera_generationsskifte( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
 void generationsskifte          ( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner]);
+
 /*
  * påskägg
  */
@@ -72,20 +76,19 @@ void load_exempel_sidan_1( const int antal_rader, const int antal_kolumner, cell
  */
 int main( void)
 {
-   /*
-    * krav : fixa en värld (matris av celler) med en visst antal positioner
+   /* krav : fixa en värld (matris av celler) med en visst antal positioner
     * exemplet i peppar använder
     *
     * exemplet använder 20x20 så låt oss göra så
     */
-   int avsluta = 0;
+   int avsluta = 0;                             /* sätt till 1 så avslutas programmet */
    cell cellerna[antal_rader][antal_kolumner];
    const int bufferdim = 10;
    char buffer[bufferdim];
 
    init_field( antal_rader, antal_kolumner, cellerna);
 
-   while(!avsluta)
+   while (!avsluta)
    {
       cellutskrift( antal_rader, antal_kolumner, cellerna);                 /* utskrift av världen med cellernas invånare */
       kalkylera_generationsskifte( antal_rader, antal_kolumner, cellerna);  /* bestämm vilka celler som i nästa generation fortfarande ska leva, dö eller uppstå */
@@ -97,12 +100,13 @@ int main( void)
 
       /* den här gillar jag inte riktigt, det är för mycket som blir implicit */
       /* om input fortfarande är lika med buffer så kan längden vara 0 ? */
-      if ( input == 0 ||            /* 0 från fgets, inget att läsa - tryckte användaren på ^D ? */
-				    /* det här skiljer sig från provprogrammet i peppar, pröva ^D där ! */
-	   strlen( buffer ) == 0 || /* helt tom rad ? om raden är tom men input är skilt från 0, hur blir det här sant ?*/
-	   strcmp( "\n", buffer)    /* det finns en rad, innehåller den enbart ett ensamt radbrytningstecken eller inte ? */
-	 )
+      if (input == 0 ||            /* 0 från fgets, inget att läsa - tryckte användaren på ^D ? */
+	  /* det här skiljer sig från provprogrammet i peppar, pröva ^D där ! */
+	  strlen( buffer ) == 0 || /* helt tom rad ? om raden är tom men input är skilt från 0, hur blir det här sant ?*/
+	  strcmp( "\n", buffer))   /* det finns en rad, innehåller den enbart ett ensamt radbrytningstecken eller inte ? */
+      {
 	 avsluta = 1;
+      }
    }
 
    return 0;
@@ -117,8 +121,10 @@ int main( void)
  */
 void cellutskrift( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner] )
 {
-   for ( int rad = 0 ; rad < antal_rader ; rad++) {
-      for ( int kolumn = 0 ; kolumn < antal_kolumner ; kolumn++) {
+   for (int rad = 0; rad < antal_rader; rad++)   /* starta utskriften längst upp till vänster */
+   {
+      for (int kolumn = 0; kolumn < antal_kolumner; kolumn++)
+      {
 	 putc( cellerna[rad][kolumn].current, stdout);
 	 putc( ' ', stdout);
       }
@@ -141,8 +147,10 @@ void init_field( const int rows, const int cols,
 {
    /* sätt alla celler som tomma
     */
-   for (int r = 0 ; r < rows ; r++) {
-      for (int c = 0 ; c < cols ; c++) {
+   for (int r = 0 ; r < rows ; r++)
+   {
+      for (int c = 0 ; c < cols ; c++)
+      {
 	 field[r][c].current = DEAD;
       }
    }
@@ -154,11 +162,13 @@ void init_field( const int rows, const int cols,
    int ch = getchar();
 
    /* Ignore following newline */
-   if (ch != '\n') {
+   if( ch != '\n')
+   {
       getchar();
    }
 
-   switch (ch) {
+   switch (ch)
+   {
       case '1':
 	 load_exempel_sidan_1(rows, cols, field);
 	 break;
@@ -229,9 +239,7 @@ void load_semaphore( const int rows, const int cols,
  *              Koden använder sidoeffekter !
  *
  * sex st celler i ett kryssmönster - ingen kvar efter den 15:e generationen
- *
  */
-
 void load_exempel_sidan_1( const int antal_rader,
 			   const int antal_kolumner,
 			   cell      cellerna[antal_rader][antal_kolumner])
@@ -257,18 +265,18 @@ void load_exempel_sidan_1( const int antal_rader,
 void load_random( const int rows, const int cols,
 		  cell field[rows][cols])
 {
-   /*
-    * slumptalet behöver ha en seed - klassisk, använd klockan
-    *
+   /* slumptalet behöver ha en seed - klassisk, använd klockan
     */
    srand(time(0));
 
-   for (int x = 0; x < cols; x++)
+   for (int rad = 0;  rad < rows; rad++)
    {
-      for (int y = 0; y < rows; y++)
+      for (int kolumn = 0; kolumn < cols; kolumn++)
       {
-	 if ( rand() > RAND_MAX/2 )       /* hälften av slumptalen ska ge en bebodd cell (lika stor chans att slumptalet är högt eller lågt) */
-	    field[y][x].current = ALIVE;  /* skulle ha kunnat kolla om slumptalet är jämnt, samma fördelning (förhoppningsvis.) */
+	 if( rand() > RAND_MAX/2 )             /* hälften av slumptalen ska ge en bebodd cell (lika stor chans att slumptalet är högt eller lågt) */
+	 {
+	    field[rad][kolumn].current = ALIVE; /* skulle ha kunnat kolla om slumptalet är jämnt, samma fördelning (förhoppningsvis.) */
+	 }
       }
    }
 }
@@ -290,7 +298,7 @@ void load_custom( const int rows, const int cols,
       scanf( "%d,%d", &r, &c);
       field[r][c].current = ALIVE;
    }
-   while ( getchar() != '\n');
+   while( getchar() != '\n');
 }
 
 /* Description: sök igenom cellerna i ytan och tag beslut på vilka celler som
@@ -309,13 +317,13 @@ void kalkylera_generationsskifte( const int antal_rader,
     *
     * se: https://conwaylife.com/wiki/Conway%27s_Game_of_Life
     */
-   for ( int rad = 0 ; rad < antal_rader ; rad++)
+   for (int rad = 0; rad < antal_rader; rad++)
    {
-      for ( int kolumn = 0 ; kolumn < antal_kolumner ; kolumn++)
+      for (int kolumn = 0; kolumn < antal_kolumner; kolumn++)
       {
 	 int grannar = antalgrannar( antal_rader, antal_kolumner, cellerna, rad, kolumn);  /* antal levande/bebodda celler runt en en viss cell */
 
-	 switch ( cellerna[rad][kolumn].current )
+	 switch (cellerna[rad][kolumn].current)
 	 {
 	    case ALIVE:
 	       switch (grannar)
@@ -324,7 +332,7 @@ void kalkylera_generationsskifte( const int antal_rader,
 		  case 1:
 		     cellerna[rad][kolumn].next = DEAD;
 		     break;
-		  case 2:                                /* implicit två eller tre levande grannar - överlever */
+		  case 2:                                /* två eller tre levande grannar - överlever */
 		  case 3:
 		     cellerna[rad][kolumn].next = ALIVE;
 		     break;
@@ -333,12 +341,13 @@ void kalkylera_generationsskifte( const int antal_rader,
 	       }
 	       break;
 
-	    case DEAD:
-	    default:
+	    case DEAD:   /* tom cell, föds det någon i den i nästa generation ? */
 	       if ( grannar == 3) /* tre levande grannar så en klon migrerar till cellen */
 		  cellerna[rad][kolumn].next = ALIVE;
-	       else
-		  cellerna[rad][kolumn].next = DEAD;
+	       break;
+
+	    default:    /* omöjligt, hit ska vi inte kunna komma eftersom init_field ska sätta de till DEAD !*/
+	       exit(1);
 	 }
       }
    }
@@ -351,27 +360,34 @@ void kalkylera_generationsskifte( const int antal_rader,
  *             cellens_rad och cellens_kolumn: för vilken cell ska antal levande grannar beräknas
  * returnerar: antal levande grannar/bebodda celler runt en specifik ( intervall 0..8 )
  */
-int antalgrannar( const int antal_rader, const int antal_kolumner, cell cellerna[antal_rader][antal_kolumner],
-		  const int cellens_rad, const int cellens_kolumn)
+int antalgrannar( const int antal_rader,
+		  const int antal_kolumner,
+		  cell cellerna[antal_rader][antal_kolumner],
+		  const int cellens_rad,
+		  const int cellens_kolumn)
 {
    /* algoritm:
     *   påbörja sökning i cell snett uppåt vänster från aktuell cell
     *   därefter sök av radvis, börja i vänster
-    *   rad två, den mittersta är aktuell cell
+    *   den mittersta i rad två är aktuell cell och räknas inte in
     */
    int antalgrannar = 0;
 
-   for ( int rad = cellens_rad-1 ; rad <= cellens_rad + 1 ; rad++) /* sök igenom 3 rader */
+   for (int rad = cellens_rad-1; rad <= cellens_rad + 1; rad++) /* sök igenom 3 rader */
    {
-      for ( int kolumn = cellens_kolumn-1 ; kolumn <= cellens_kolumn + 1 ; kolumn++) /* sök igenom 3 kolumner */
-	 if ( rad >= 0 && kolumn >= 0                            &&  /* kontroll att sökningen är i cellerna */
-	      rad < antal_rader && kolumn < antal_kolumner       &&  /* inte nedanför eller för långt till höger */
-	      !( rad == cellens_rad && kolumn == cellens_kolumn) &&  /* se till att inte få med cellen självt !!! */
-	      cellerna[rad][kolumn].current == ALIVE)                /* lever grannen ? */
+      for (int kolumn = cellens_kolumn-1; kolumn <= cellens_kolumn + 1; kolumn++) /* sök igenom 3 kolumner */
+      {
+	 if (rad >= 0 && kolumn >= 0                            &&  /* kontroll att sökningen är i cellerna */
+	     rad < antal_rader && kolumn < antal_kolumner       &&  /* inte nedanför eller för långt till höger */
+	     !( rad == cellens_rad && kolumn == cellens_kolumn) &&  /* se till att inte räkna med cellen självt !!! */
+	     cellerna[rad][kolumn].current == ALIVE)                /* lever grannen ? */
+	 {
 	    antalgrannar ++;
+	 }
+      }
    }
 
-   assert( antalgrannar >= 0 && antalgrannar < 9);
+   assert( antalgrannar >= 0 && antalgrannar < 9);   /* omöjlighet, en cell kan inte har mer än 8 grannar */
 
    return antalgrannar;  /* intervallet 0..8 */
 }
@@ -386,15 +402,15 @@ void generationsskifte( const int antal_rader,
 			const int antal_kolumner,
 			cell cellerna[antal_rader][antal_kolumner])
 {
-   /* låt en generation gå/leva-och-dö
+   /* låt en generation gå/leva-och-dö/födas
     */
-   for ( int rad = 0 ; rad < antal_rader ; rad++)
+   for (int rad = 0; rad < antal_rader; rad++)
    {
-      for ( int kolumn = 0 ; kolumn < antal_kolumner ; kolumn++)
+      for (int kolumn = 0; kolumn < antal_kolumner; kolumn++)
       {
-	 switch ( cellerna[rad][kolumn].current )          /* utgå från nuvarande status */
+	 switch (cellerna[rad][kolumn].current)          /* utgå från nuvarande status, tom cell eller inte ? */
 	 {
-	    case ALIVE:                                    /* levande cell */
+	    case ALIVE:                                    /* cellen är än så länge bebodd/levande */
 	       if ( cellerna[rad][kolumn].next == DEAD )   /* dör, pga överbefolkning eller otillräckligt stöd från intilliggande ? */
 		  cellerna[rad][kolumn].current = DEAD;
 	       break;
@@ -403,6 +419,7 @@ void generationsskifte( const int antal_rader,
 	       if ( cellerna[rad][kolumn].next == ALIVE )  /* cellen får en inneboende/klon från intilliggande */
 		  cellerna[rad][kolumn].current = ALIVE;
 	 }
+
       }
    }
 }
