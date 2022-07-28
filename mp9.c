@@ -4,7 +4,7 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-07-28 12:23:15 stefan>
+ * Date:         Time-stamp: <2022-07-28 12:51:03 stefan>
  * File:         mp9.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -60,12 +60,12 @@ int verifiera_utfil(const char *filnamn, FILE **out_file_p);
 int main( int argc,
 	  const char *argv[])
 {
-   field* nuvarande_situation; /* =0;  världen */
-   FILE*  infil=0;             /* ursprungsläge */
-   FILE*  resultatsfil=0;      /* nuvarande situation, sparas vid programavslut */
-   int    programstatus = 1;   /* används i exit - som standard ses programmets körning alltid
-				* innan det är känt hur resultat blev som felaktig
-				*/
+   field* nuvarande_situation=0; /* världen */
+   FILE*  infil=0;               /* ursprungsläge */
+   FILE*  resultatsfil=0;        /* nuvarande situation, sparas vid programavslut */
+   int    programstatus = 1;     /* används i exit - som standard ses programmets körning alltid
+				  * innan det är känt hur resultat blev som felaktig
+				  */
 
    /* används för läsning från terminal */
    const int bufferdim = 10;
