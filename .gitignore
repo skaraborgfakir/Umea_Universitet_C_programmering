@@ -3,3 +3,8 @@ mp8
 a.out
 *~
 mp8
+*.o
+*.c.supergraph.dot
+*.c.supergraph.png
+*.c.supergraph-eg.dot
+*.c.supergraph-eg.png
