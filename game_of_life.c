@@ -4,7 +4,7 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-07-28 12:23:55 stefan>
+ * Date:         Time-stamp: <2022-07-28 13:57:45 stefan>
  * File:         game_of_life.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -67,13 +67,9 @@ cell** allokera_celler(int antal_rader, int antal_kolumner)
 {
    cell** cells_p = malloc( sizeof(cell *) * antal_rader);
 
-   int i = 0;
-   while( i < antal_rader)
+   for (int i=0; i < antal_rader; i++)
    {
-      cells_p[i] = malloc( sizeof(cell) * antal_kolumner); /* allokera antal_kolumner antal av struct cell
-							    * och
-							    */
-      i++;
+      cells_p[i] = malloc( sizeof(cell) * antal_kolumner); /* allokera antal_kolumner antal av struct cell */
    }
    return cells_p;
 }
@@ -120,10 +116,10 @@ int antalgrannar( field *nuvarande_situation,
    {
       while (kolumn <= (cellens_kolumn + 1))
       {
-	 if ( rad >= 0 && kolumn >= 0 &&                                               /* kontroll att sökningen är i cellerna, kan skrivas om så att rad/kolumn aldrig är utanför */
-	      rad < nuvarande_situation->rows && kolumn < nuvarande_situation->cols && /* inte nedanför eller för långt till höger */
-	      !( rad == cellens_rad && kolumn == cellens_kolumn) &&                    /* se till att inte räkna med cellen självt !!! */
-	      ((cell *) nuvarande_situation->cells[rad])[kolumn].current == ALIVE)     /* lever grannen ? */
+	 if (rad >= 0 && kolumn >= 0 &&                                               /* kontroll att sökningen är i cellerna, kan skrivas om så att rad/kolumn aldrig är utanför */
+	     rad < nuvarande_situation->rows && kolumn < nuvarande_situation->cols && /* inte nedanför eller för långt till höger */
+	     !( rad == cellens_rad && kolumn == cellens_kolumn) &&                    /* se till att inte räkna med cellen självt !!! */
+	     ((cell *) nuvarande_situation->cells[rad])[kolumn].current == ALIVE)     /* lever grannen ? */
 	 {
 	    resultat++;
 	 }
@@ -147,49 +143,35 @@ int antalgrannar( field *nuvarande_situation,
  */
 void utskrift( field* nuvarande_situation)
 {
-   int rad = 0;
-   int kolumn = 0;
-
-   while ( rad < nuvarande_situation->rows)
+   for (int rad = 0; rad < nuvarande_situation->rows; rad++)
    {
-      while ( kolumn < nuvarande_situation->cols)
+      for (int kolumn = 0; kolumn < nuvarande_situation->cols; kolumn++)
       {
-	 switch ( ((cell *)nuvarande_situation->cells[rad])[kolumn].current)
+	 if ( ((cell *)nuvarande_situation->cells[rad])[kolumn].current == ALIVE )
 	 {
-	    case ALIVE:
-	       putc( 'X', stdout);
-	       break;
-
-	    case DEAD:
-	    default:
-	       putc( '.', stdout);
-	       break;
+	    putc( 'X', stdout);
+	 }
+	 else
+	 {
+	    putc( '.', stdout);
 	 }
 	 putc( ' ', stdout);
-	 kolumn++;
       }
       putc( '\n', stdout);
-      kolumn = 0;  /* ny rad, skriv ut från vänster kant */
-      rad++;
    }
 }
 
 /* Beskrivning: låt en generation kvarstå, dö ut eller födas
- * parametrar:
+ * parametrar:  nuvarande_situation pekare till en struct som beskriver världen
  * returnerar:
  *
  * använder sidoeffekter
  */
 void generationsskifte( field* nuvarande_situation)
 {
-   /* låt en generation gå
-    */
-   int rad = 0;
-   int kolumn = 0; /* start i vänster kolumn */
-
-   while ( rad < nuvarande_situation->rows)
+   for (int rad = 0; rad < nuvarande_situation->rows; rad++)
    {
-      while ( kolumn < nuvarande_situation->cols)
+      for (int kolumn = 0; kolumn < nuvarande_situation->cols; kolumn++)
       {
 	 if ( nuvarande_situation->cells[rad][kolumn].next == ALIVE)
 	 {
@@ -199,12 +181,7 @@ void generationsskifte( field* nuvarande_situation)
 	 {
 	    nuvarande_situation->cells[rad][kolumn].current = DEAD;
 	 }
-
-	 kolumn++;
       }
-
-      kolumn = 0; /* ny rad, börja i vänstra kolumnen */
-      rad++;
    }
 }
 
