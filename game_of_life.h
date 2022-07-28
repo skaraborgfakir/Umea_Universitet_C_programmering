@@ -4,7 +4,7 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-05-27 17:09:00 stefan>
+ * Date:         Time-stamp: <2022-07-13 17:09:57 stefan>
  * File:         game_of_life_file_handler.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -21,7 +21,8 @@
 
 /* Declaration of data structure
  */
-typedef struct {
+typedef struct
+ {
    char current;
    char next;
 } cell;
@@ -29,7 +30,8 @@ typedef struct {
 /* Krav från uppgiftsektionen för Mästarprov 9:
  *   2: skapa en struktur som beskriver världen som organismerna ska vara i
  */
-typedef struct {
+typedef struct
+{
    int rows;
    int cols;
 
@@ -41,23 +43,29 @@ typedef struct {
  *     4: implementera funktioner för dynamisk minneshantering
  *     6: placera de här i game_of_life.c
  */
-field* allocate_field();
-void dispose_field(field** current_field);
-cell** allocate_cells(int rows, int cols);
-void dispose_cells(field *current_field);
+field* allokera_spelytan();
+void   avallokera_ytan( field** current_field);
+cell** allokera_celler( int rows, int cols);
+void   avallokera_celler( field *current_field);
 
 /* uppdaterad version av init_field
  * använder load_config_from_file från game_of_life_file_handler
  */
-int init_field(field *current_field, FILE *infil);
+int init_field( field *current_field, FILE *infil);
 
 /* dump av skärmbild
  */
-void dump_field(field *current_field);
+void utskrift( field *current_field);
 
-/* en generation
+/* vad ska hända ?,
+ *   vilken fortsätter finnas eller inte ?
+ *   vilka nya kommer ?
  */
-void one_generation(field *current_field);
+int kalkylera_generationsskifte( field *nuvarande_situation);
+
+/* låt en ny ny generation komma
+ */
+void generationsskifte( field* nuvarande_situation);
 
 #endif
 
