@@ -102,7 +102,7 @@ int load_config_from_file(field *nuvarande_situation, FILE *fp)
    }
 
    fclose(fp);
-   return(resultat);
+   return resultat;
 }
 
 /* Description: Saves the current configuration of the field to a
@@ -139,7 +139,7 @@ int save_config_to_file( const field nuvarande_situation, FILE *fp)
    }
 
    fclose(fp);
-   return(0);
+   return 0;
 }
 
 /*

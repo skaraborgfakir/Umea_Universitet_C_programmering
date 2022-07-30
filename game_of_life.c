@@ -4,7 +4,7 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-07-28 13:57:45 stefan>
+ * Date:         Time-stamp: <2022-07-28 14:00:54 stefan>
  * File:         game_of_life.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -133,7 +133,7 @@ int antalgrannar( field *nuvarande_situation,
 
    assert( resultat >= 0 && resultat < 9);   /* omöjlighet, en cell kan inte har mer än 8 grannar */
 
-   return( resultat);
+   return resultat;
 }
 
 /* Krav från uppgiftsektionen för Mästarprov 9:
@@ -286,7 +286,7 @@ int init_field(field *nuvarande_situation, FILE *infil)
       resultat = 0;
    }
 
-   return( resultat);
+   return resultat;
 }
 
 /*
