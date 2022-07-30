@@ -1,0 +1,4 @@
+file ./mp9
+set args ./testfiler/gun.gol /tmp/gun.gol /tmp/gun2.gol
+run
+quit

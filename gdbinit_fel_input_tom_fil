@@ -1,0 +1,4 @@
+file ./mp9
+set args ./testfiler/semaphore_felaktig_tom_fil.gol /tmp/semaphore.test.gol
+br load_config_from_file
+run
