@@ -4,7 +4,7 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-07-20 16:37:15 stefan>
+ * Date:         Time-stamp: <2022-07-28 14:25:29 stefan>
  * File:         game_of_life_file_handler.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -45,60 +45,58 @@ int load_config_from_file(field *nuvarande_situation, FILE *fp)
     *
     * infilen ska redan vara öppnad
     */
-   int resultat = 0;
+   int resultat = 1;      /* som standard är förutsättning att ett filfel ska rapporterar, inte ok förrän det är visat att den är ok */
+   int inmatningsfel = 0;
 
-   if ( fscanf( fp, "%u,%u\n", &(nuvarande_situation->rows), &(nuvarande_situation->cols)) == 2)
+   if (fscanf( fp, "%u,%u\n", &(nuvarande_situation->rows), &(nuvarande_situation->cols)) == 2)
    {
       char buffer[nuvarande_situation->cols + 1];
       nuvarande_situation->cells = allokera_celler(nuvarande_situation->rows, nuvarande_situation->cols);
 
-      int y = 0;
+      int rad = 0;
 
-      while ( resultat == 0 && y < nuvarande_situation->rows)
+      while (inmatningsfel == 0 &&          /* knäck körningen om ett fel är funnet */
+	     rad < nuvarande_situation->rows)
       {
-	 if ( fscanf(fp, "%s", buffer) == 1)
+	 if (fscanf(fp, "%s", buffer) == 1)
 	 {
-	    int x = 0;
-	    while ( resultat == 0 && x < nuvarande_situation->cols )
+	    int kolumn = 0;
+	    while (inmatningsfel == 0 &&              /* knäck körningen om ett fel är funnet */
+		   kolumn < nuvarande_situation->cols)
 	    {
-	       ((cell*)nuvarande_situation->cells[y])[x].current = DEAD;
+	       ((cell*)nuvarande_situation->cells[rad])[kolumn].current = DEAD;
 
-	       switch( buffer[x] )
+	       switch (buffer[kolumn])
 	       {
-		  case '*':
-		     ((cell*)nuvarande_situation->cells[y])[x].current = ALIVE;
+		  case '*':               /* bebodd cell */
+		     ((cell*)nuvarande_situation->cells[rad])[kolumn].current = ALIVE;
 		     break;
-		  case '0':
-		     ((cell*)nuvarande_situation->cells[y])[x].current = DEAD;
+		  case '0':               /* obebodd cell */
+		     ((cell*)nuvarande_situation->cells[rad])[kolumn].current = DEAD;
 		     break;
-		  default:
-		     /* fputs( "Incorrect configuration file format\n", stderr);*/
-		     fprintf( stderr, "Incorrect configuration file %s\n", "format");
-		     resultat = 1;
+		  default:                /* ett fel funnet (okänd bokstav), knäck körningen */
+		     fprintf( stderr, "Incorrect configuration file format\n");
+		     inmatningsfel = 1;
 	       }
-	       x++;
+	       kolumn++;
 	    }
 	 }
-	 else
+	 else       /* ett fel funnet, knäck körningen */
 	 {
-	    /* fputs( "Incorrect configuration file format\n", stderr);*/
 	    fprintf( stderr, "Incorrect configuration file format\n");
-	    resultat = 1;
+	    inmatningsfel = 1;
 	 }
-	 y++;
+	 rad++;
+      }
+
+      if (!inmatningsfel)  /* inget fel i körningen ?, om så signalera allt ok */
+      {
+	 resultat = 0;
       }
    }
-   else
+   else /* felaktig input på första raden - fick vi två tal ? - NEJ */
    {
-      /* fputs( "Incorrect configuration file format\n", stderr);
-       */
-      /* felaktig input på första raden - fick vi två tal ? - NEJ
-	 fprintf( stderr, "Incorrect configuration file format\n");
-	 fflush( stderr);
-      */
-      fprintf( stderr, "Incorrect configuration file %s\n", "format");
-
-      resultat = 1;
+      fprintf( stderr, "Incorrect configuration file format\n");
    }
 
    fclose(fp);
