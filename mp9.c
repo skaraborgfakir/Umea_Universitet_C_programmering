@@ -4,7 +4,7 @@
  * Spring 22
  * Mastery test 9
  *
- * Date:         Time-stamp: <2022-07-28 12:51:03 stefan>
+ * Date:         Time-stamp: <2022-07-28 14:01:26 stefan>
  * File:         mp9.c
  * Description:  A simple implementation of Conway's Game of Life.
  * Author:       Stefan Niskanen Skoglund
@@ -283,7 +283,7 @@ int verifiera_infil( const char *filnamn, FILE **fil_p)
       }
    }
 
-   return( resultat);
+   return resultat;
 }
 
 /* Beskrivning: kontrollera att stigen (path) och namnet för utfilen
@@ -366,7 +366,7 @@ int verifiera_utfil( const char *filnamn, FILE **fil_p)
       }
    }
 
-   return( resultat);
+   return resultat;
 }
 
 /*
